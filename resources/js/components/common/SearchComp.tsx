@@ -1,0 +1,143 @@
+import { FormDef, FormItemDef } from '@/types/ui'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import FormComp from './FormComp'
+import { DOE, JSONType } from '@/types/common'
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+
+// search component
+// auto fills from url query params
+// refreshes url with search params (typically used by the backend to filter records to send)
+function SearchComp({formItems, mainSearchItemIdx}: {
+    formItems: FormItemDef[], 
+    mainSearchItemIdx: number,
+}) {
+    // if form items is empty return null
+    if(formItems.length < 1) return null;
+
+    // refs
+    const mainSearchItemInputRef = useRef<HTMLInputElement>(null);
+
+    // states and memos
+    const mainSearchItem: FormItemDef = useMemo(() => formItems[mainSearchItemIdx], [mainSearchItemIdx]);
+    const [showFilters, setShowFilters] = useState<boolean>(false); // toggle more filters section
+    // prepared fileds (fields transformed for filtering based on field type)
+    const preparedFields: FormItemDef[] = useMemo(() => prepareFormItems(formItems), [formItems]);
+
+    // get data from query string (passed to form at page load to fill)
+    const data: JSONType = Object.fromEntries(new URLSearchParams(location.search).entries());
+
+    // prepare form items for adequate filterable fields
+    function prepareFormItems(formItems: FormItemDef[]): FormItemDef[]{
+        let res: FormItemDef[] = structuredClone(formItems);
+
+        // remove main search fields
+        res = res.filter((f, i) => i !== mainSearchItemIdx);
+
+        // transform fileds
+        for(let i = 0; i < res.length; i++){
+            let f = res[i];
+            
+            // transform number type fields into min and max filters
+            if(f.type === "number"){
+                const subtituteWith: FormItemDef[] = [
+                    {...structuredClone(f), name: `${f.name}_min`, displayName: `${f.name} Min`},
+                    {...structuredClone(f), name: `${f.name}_max`, displayName: `${f.name} Max`},
+                ];
+                res.splice(i, 1, ...subtituteWith);
+                i++; // skip last added fields
+            }
+        }
+
+        return res;
+    }
+
+    // prepare ket value for submit
+    function prepareKeyValue(name: string, value: any): {name: string, value: any}{
+        let res = {name, value};
+
+        let item: FormItemDef | undefined = formItems.find(f => f.name === name);
+        if(!item) return res;
+
+        // handle number fields (min/max)
+        if(item.type === "number"){
+            const sv = item.name.split("_");
+            const last = sv[sv.length - 1];
+            if(["min", "max"].includes(last)){
+                res.name = sv.slice(0, -1).join("_");
+                res.value = last === "min" ? `lte_${value}` : `gte_${value}`;
+            }
+        }
+
+        return res;
+    }
+
+    // on search
+    function onSearch(filters?: JSONType){
+        let currSQ = new URLSearchParams();
+
+        // append main search item value if not empty
+        if(mainSearchItemInputRef.current && mainSearchItemInputRef.current.value != ""){
+            currSQ.set(mainSearchItem.name, mainSearchItemInputRef.current ? `l_${mainSearchItemInputRef.current.value}` : "");
+        }
+
+        // append filters if exists and showFilters is true
+        if(showFilters && filters) Object.entries(filters).forEach(([k, v]) => {
+            if(v){
+                const transformed = prepareKeyValue(k, v);
+                currSQ.set(transformed.name, transformed.value.toString()); 
+            }
+        });
+
+        // refresh
+        location.search = currSQ.toString();
+    }
+
+    // on apply filters
+    async function onApplyFilters(json: JSONType): Promise<DOE>{
+        onSearch(json);
+        
+        // had to return a promise<DOE> as it is required by the form component action
+        return {data: null, error: null};
+    }
+
+    // render search filter form
+    function renderSearchFiltersForm(){
+        return (
+            <FormComp 
+                formDef={{
+                    id: "search_form",
+                    title: "Filters",
+                    items: preparedFields.filter((_, i) => i !== mainSearchItemIdx), // exclude the main search item
+                    action: { name: "apply", displayName: "Apply", onValidatedData: onApplyFilters },
+                }}
+                data = {data}
+            />
+        )
+    }
+
+    return (
+        <section className='flex flex-col gap-4'>
+            {/* // Main search item */}
+            <div className='flex gap-2 items-center'>
+                <div className='grow'>
+                    <Input ref={mainSearchItemInputRef} className='w-full' placeholder={"Search by " + (mainSearchItem.displayName || mainSearchItem.name.replaceAll("_", " "))} />
+                </div>
+                <Button variant={"default"} size={"icon"} onClick={onSearch}><i className='bi bi-search'></i></Button>
+                <Button variant={"default"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)}>
+                    <i className={`bi ${showFilters ? 'bi-x-lg' : 'bi-filter'}`}></i>
+                </Button>
+            </div>
+
+            {/* // Filters */}
+            {showFilters &&
+                <div className='border p-4'>
+                    { renderSearchFiltersForm() }
+                </div>
+            }
+        </section>
+    )
+
+}
+
+export default SearchComp

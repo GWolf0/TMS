@@ -1,0 +1,42 @@
+{
+    "info":{
+        "name": "TMS",
+        "path": "C://Dev/Php/Tms"
+    },
+
+    "templates":{
+        "root": "/templates",
+        "model": "/model.stub",
+        "controller": "/controller.stub",
+        "policy": "/policy.stub",
+        "factory": "/factory.stub",
+        "form": "/form.stub",
+        "apiresource": "/apiresource.stub",
+        "unittest": "/unittest.stub"
+    },
+
+    "models": {
+        "user":{
+            "tablename": "users",
+            "fields": {
+                "id": ["int", "autoincrement", "primarykey"],
+                "name": ["text"],
+                "email": ["text", "email", "unique:users,email"],
+                "password": ["text", "hidden"],
+                "role": ["enum:admin,employee,driver"],
+                "organization_id": ["int", "foreignid:organization,id"],
+                "timestamps": ["true"]
+            }
+        },
+        "organization":{
+            "tablename": "organizations",
+            "fields": {
+                "id": ["int", "autoincrement", "primarykey"],
+                "name": ["text"],
+                "email": ["text", "email"],
+                "phonenumber": ["text"],
+                "timestamps": ["true"]
+            }
+        }
+    }
+}
