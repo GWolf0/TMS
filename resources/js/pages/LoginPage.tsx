@@ -1,17 +1,17 @@
-import ErrorComp from '@/components/common/ErrorComp';
-import Logo from '@/components/common/Logo';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import useFetch from '@/hooks/useFetch';
-import MainLayout from '@/layouts/MainLayout'
-import { LOGIN_REQ } from '@/requests/requests';
-import AlertService from '@/services/AlertService';
-import { SharedData } from '@/types';
-import { DOE } from '@/types/common';
 import { usePage } from '@inertiajs/react';
 import { LoaderCircleIcon } from 'lucide-react';
 import React from 'react'
 import { z } from "zod";
+import { SharedData } from '../types';
+import useRequest from '../hooks/useRequest';
+import ErrorComp from '../components/common/ErrorComp';
+import Logo from '../components/common/Logo';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import MainLayout from '../layouts/MainLayout';
+import { LOGIN_REQ } from '../requests/requests';
+import AlertService from '../services/AlertService';
+import { DOE } from '../types/common';
 
 // Login page
 function LoginPage() {
@@ -19,7 +19,7 @@ function LoginPage() {
 
     if(auth.user) return null;
 
-    const [fetchLogin, fetchLoginLoading, fetchLoginDoe] = useFetch(LOGIN_REQ);
+    const [fetchLogin, fetchLoginLoading, fetchLoginDoe] = useRequest(LOGIN_REQ);
 
     // On login
     async function onLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -31,13 +31,12 @@ function LoginPage() {
         const validationObj = z.object({
             email: z.string().email(),
             password: z.string().min(8).max(24),
+            remember_me: z.boolean({coerce: true}).optional(),
         });
 
         const validation = validationObj.safeParse(params);
-
+        // alert(JSON.stringify(validation));
         if(validation.success){
-            console.log(`Send login request`);
-            console.log(validation.data);
             const doe: DOE = await fetchLogin(validation.data);
             if(doe.error){
                 AlertService.showAlert({id: -1, text: `Error Login: ${doe.error}`});

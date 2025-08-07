@@ -1,6 +1,6 @@
-import { PaginationInfo } from '@/types/common'
 import React from 'react'
 import { Button } from '../ui/button'
+import { PaginationInfo } from '../../types/common';
 
 // pagination component
 // if auto is true, then a "page=number" query param will be appended to the url queryparams
@@ -9,7 +9,7 @@ function PaginationComp({pInfo, auto, onPage}: {
 }) {
 
     function _onPage(num: number){
-        if(auto){
+        if(auto && pInfo.current_page != num){
             let sp = new URLSearchParams(window.location.search);
             sp.set("page", num.toString());
             location.search = sp.toString();

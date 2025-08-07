@@ -1,12 +1,12 @@
-import { BaseFooter, BaseHeader } from '@/components/common/BaseHeaderAndFooter'
-import BaseLayout from '@/components/common/BaseLayout'
-import Logo from '@/components/common/Logo'
-import { Button } from '@/components/ui/button'
-import useFetch from '@/hooks/useFetch'
-import { LOGOUT_REQ } from '@/requests/requests'
-import { SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
 import React, { ReactNode } from 'react'
+import { SharedData } from '../types';
+import BaseLayout from '../components/common/BaseLayout';
+import { BaseHeader, BaseFooter } from '../components/common/BaseHeaderAndFooter';
+import { Button } from '../components/ui/button';
+import Logo from '../components/common/Logo';
+import useRequest from '../hooks/useRequest';
+import { LOGOUT_REQ } from '../requests/requests';
 
 function MainLayout({children}: {
     children: ReactNode,
@@ -14,7 +14,7 @@ function MainLayout({children}: {
     const {auth, name} = usePage<SharedData>().props;
 
     // fetch logout
-    const [handleLogout, logoutIsLoading, logoutDoe] = useFetch(LOGOUT_REQ);
+    const [handleLogout, logoutIsLoading, logoutDoe] = useRequest(LOGOUT_REQ);
 
     function onLogout(){
         handleLogout();

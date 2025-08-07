@@ -31,7 +31,9 @@ class EmployeeController extends Controller
         if($type === Reservation::$TYPES[0] && !Gate::allows('reserve_dropoff')) abort(401, "Unauthorized action");
         else if($type === Reservation::$TYPES[1] && !Gate::allows('reserve_pickup')) abort(401, "Unauthorized action");
 
-        $allowedDropoffTimes = TMSSystem::getInstance()->getAvailableDropoffTimes();
+        $allowedDropoffTimes = $type === Reservation::$TYPES[0] ? 
+            TMSSystem::getInstance()->getAvailableDropoffTimes() :
+            TMSSystem::getInstance()->getAvailablePickupTimes();
 
         $req->validate([
             "traject_id" => "required",

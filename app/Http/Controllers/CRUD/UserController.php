@@ -32,7 +32,6 @@ class UserController extends Controller
 
     // store
     public function store(UserRequest $req): JsonResponse{
-        Log::debug("stroe");
         Gate::authorize('create', User::class);
         $model = User::create($req->validated());
         return response()->json($model);
@@ -40,7 +39,6 @@ class UserController extends Controller
 
     // update
     public function update(UserRequest $req, string $id): JsonResponse{
-        Log::debug("!!");
         $model = User::findOrFail($id);
         Gate::authorize('update', $model);
         $model->update($req->validated());

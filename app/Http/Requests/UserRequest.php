@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
@@ -22,7 +23,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $requiredOrSometimes = $this->isMethod('POST') ? 'required' : 'sometimes';
-
+        
         return [
             'name' => [$requiredOrSometimes, 'string', 'max:255'],
             'email' => array_filter([
@@ -31,7 +32,7 @@ class UserRequest extends FormRequest
                 'email',
                 $this->isMethod('POST')
                     ? 'unique:users,email'
-                    : Rule::unique('users', 'email')->ignore($this->route('id')),
+                    : Rule::unique('users', 'email')->ignore($this->input('id')),
                 'max:255',
             ]),
             'password' => [$requiredOrSometimes, 'string'],

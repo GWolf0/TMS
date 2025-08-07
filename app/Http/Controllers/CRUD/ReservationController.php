@@ -25,7 +25,7 @@ class ReservationController extends Controller
     // index
     public function index(Request $req): JsonResponse{
         Gate::authorize('viewAny', Reservation::class);
-        $models = QueryHelper::searchFiltered(Reservation::query(), $req->query());
+        $models = QueryHelper::searchFiltered(Reservation::query(), $req->query(), Reservation::$WITH);
         return response()->json(ReservationResource::collection($models));
     }
 

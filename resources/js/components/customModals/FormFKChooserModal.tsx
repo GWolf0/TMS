@@ -1,12 +1,11 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import BaseModal from '../common/BaseModals'
-import { FormItemDef } from '@/types/ui';
-import { h_FormItemDisplayName } from '@/helpers/formHelper';
-import useFetch from '@/hooks/useFetch';
-import { MISC_FK_LABELS_REQ } from '@/requests/requests';
-import { DOE, PaginatedData } from '@/types/common';
 import { LoaderCircleIcon } from 'lucide-react';
 import PaginationComp from '../common/PaginationComp';
+import { FormItemDef } from '../../types/uiTypes';
+import { DOE, PaginatedData } from '../../types/common';
+import useRequest from '../../hooks/useRequest';
+import { MISC_FK_LABELS_REQ } from '../../requests/requests';
 
 export const FK_FORM_MODAL_CHOOSER_ID = -2;
 
@@ -21,7 +20,7 @@ function FormFKChooserModal({item}: {
     const [selectedOption, setSelectedOption] = useState<number>(-1);
 
     // fetching hook
-    const [fetchFKLabels, fetchFKLabelsLoading, fkLabelsDoe] = useFetch(MISC_FK_LABELS_REQ, true);
+    const [fetchFKLabels, fetchFKLabelsLoading, fkLabelsDoe] = useRequest(MISC_FK_LABELS_REQ, true);
 
     useEffect(() => {
         // fetch options
@@ -30,7 +29,7 @@ function FormFKChooserModal({item}: {
 
     function renderHeader(): ReactNode{
         return (
-            <p>Choose {h_FormItemDisplayName(item.name, item.displayName)}</p>
+            <p>Choose {item.displayName}</p>
         )
     }
 

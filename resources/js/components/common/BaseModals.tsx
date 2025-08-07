@@ -1,15 +1,15 @@
-import { ModalDef } from '@/types/ui'
+import { modalContext, ModalContextProvider } from '../../contexts/modalContext';
+import ModalService from '../../services/ModalService';
+import { ModalDef } from '../../types/uiTypes';
 import { Button } from '../ui/button'
-import { modalContext, ModalContextProvider } from '@/contexts/modalContext';
 import { Fragment, useContext, useEffect } from 'react';
-import ModalService from '@/services/ModalService';
 
 // base modal component
 function BaseModal({modal, fullScreen}: {
     modal: ModalDef, fullScreen?: boolean,
 }) {
 
-    function onClose(){ ModalService.closeModal(modal.id); }
+    function onClose() { ModalService.closeModal(modal.id); }
 
     // perform footer action (if action returns null, then trigger close)
     function onAction(action: () => any){

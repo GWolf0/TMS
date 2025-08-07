@@ -4,10 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Http\Resources\ReservationResource;
+use App\Http\Resources\ShiftResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class User extends Authenticatable
@@ -77,7 +82,7 @@ class User extends Authenticatable
 
     // get user profile data
     public static function getUserProfile(string $userId){
-        $data = User::select(array_keys(User::$PROFILE_UPDATEABLE_FIELDS))->where("id", $userId)->first();
+        $data = new UserResource(User::select(User::$PROFILE_SHOWABLE_FIELDS)->where("id", $userId)->first());
         return $data;
     }
 
@@ -85,15 +90,15 @@ class User extends Authenticatable
     // employee: get today's reservations
     public static function getEmployeeTodaysReservations(string $employeeId): array{
         $models = Reservation::where("user_id", $employeeId)->whereDate("created_at", now())->get();
-
+        
         $dropoffReservation = null;
         $pickupReservation = null;
 
         foreach($models as $model){
             if($model->type === Reservation::$TYPES[0]){
-                $dropoffReservation = $model;
+                $dropoffReservation = new ReservationResource($model);
             }else{
-                $pickupReservation = $model;
+                $pickupReservation = new ReservationResource($model);
             }
         }
 
@@ -101,16 +106,18 @@ class User extends Authenticatable
     }
 
     // driver today's assigned shifts
-    public static function getDriverTodaysAssignedShifts(string $driverId): Collection{
-        $shifts = Shift::where("driver_id", $driverId)->whereDate("created_at", now())->get();
+    public static function getDriverTodaysAssignedShifts(string $driverId): AnonymousResourceCollection{
+        $shifts = ShiftResource::collection(Shift::where("driver_id", $driverId)->whereDate("created_at", now())->get());
         return $shifts;
     }
 
     // driver availability status
-    public static function getDriverAvailabilityStatus(string $driverId): bool{
-        $is_available = User::select("meta->is_available")->where("id", $driverId)->first();
-        if(empty($is_available)) return false;
-        return $is_available;
+    public static function getDriverAvailabilityStatus(string $driverId): bool {
+        $user = User::select("meta")->where("id", $driverId)->first();
+
+        if(empty($user) || !isset($user['meta'])) return false;
+
+        return filter_var($user["meta"]['is_available'], FILTER_VALIDATE_BOOLEAN);
     }
 
 }

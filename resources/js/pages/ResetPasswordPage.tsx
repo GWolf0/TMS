@@ -1,12 +1,12 @@
-import ErrorComp from '@/components/common/ErrorComp';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import useFetch from '@/hooks/useFetch';
-import { RESET_PWD_REQ } from '@/requests/requests';
-import AlertService from '@/services/AlertService';
-import { DOE, JSONType } from '@/types/common';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react'
+import useRequest from '../hooks/useRequest';
+import { RESET_PWD_REQ } from '../requests/requests';
+import ErrorComp from '../components/common/ErrorComp';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import AlertService from '../services/AlertService';
+import { DOE } from '../types/common';
 
 // Page contains form to reset password (typically triggered by reset password link from user email)
 function ResetPasswordPage() {
@@ -15,7 +15,7 @@ function ResetPasswordPage() {
     const [performed, setPerformed] = useState<boolean>(false);
 
     // fetch hooks
-    const [performPWDReset, pwdResetLoading, pwdResetDoe] = useFetch(RESET_PWD_REQ);
+    const [performPWDReset, pwdResetLoading, pwdResetDoe] = useRequest(RESET_PWD_REQ);
 
     // actions
     async function onPWDReset(e: React.FormEvent<HTMLFormElement>) {

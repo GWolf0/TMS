@@ -40,7 +40,9 @@ class DriverController extends Controller
 
         $req->mergeIfMissing(["is_available" => false]);
 
-        $req->user()->update(["meta" => '{"is_available": '. $req->boolean("is_available") .'}']);
+        $req->user()->update(["meta" => [
+            "is_available" => $req->boolean("is_available")
+        ]]);
         
         return response()->json(["message" => "Availability updated successfully"]);
     }

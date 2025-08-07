@@ -1,5 +1,5 @@
-import { CustomModal, ModalDef } from "@/types/ui";
 import { Dispatch, ReactNode, SetStateAction } from "react";
+import { CustomModal, ModalDef } from "../types/uiTypes";
 
 // As convention for this project
 // modals with ids < 0 are considered custom modals, their ids must be defined in the same file as their component (must be unique and signed)

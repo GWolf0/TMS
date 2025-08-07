@@ -7,6 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReservationResource extends JsonResource
 {
+    public static $wrap = null;
+
     /**
      * Transform the resource into an array.
      *
@@ -15,8 +17,9 @@ class ReservationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [...parent::toArray($request), "labels" => [
-            "user" => optional($this->user->name),
-            "traject" => optional($this->traject->name),
+            "user" => $this->user?->name,
+            "traject" => $this->traject?->name,
+            "shift" => $this->shift?->number,
         ]];
     }
 }

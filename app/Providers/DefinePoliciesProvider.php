@@ -51,12 +51,12 @@ class DefinePoliciesProvider extends ServiceProvider
 
             return empty($todaysReservations[1]);
         });
-        Gate::define("cancel_dropoff", function(?User $user, Reservation $reservation){
-            return !empty($user) && $user->isEmployee() && $user->id === $reservation->user_id && 
+        Gate::define("cancel_dropoff", function(?User $user, ?Reservation $reservation){
+            return !empty($user) && $user->isEmployee() && !empty($reservation) && $user->id === $reservation->user_id && 
             ReservationsProcessingService::isOpenForReservations();
         });
-        Gate::define("cancel_pickup", function(?User $user, Reservation $reservation){
-            return !empty($user) && $user->isEmployee() && $user->id === $reservation->user_id && 
+        Gate::define("cancel_pickup", function(?User $user, ?Reservation $reservation){
+            return !empty($user) && $user->isEmployee() && !empty($reservation) && $user->id === $reservation->user_id && 
             ReservationsProcessingService::isOpenForReservations();
         });
         Gate::define("show_reservations", function(?User $user){

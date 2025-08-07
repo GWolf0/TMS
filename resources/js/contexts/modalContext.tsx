@@ -1,6 +1,6 @@
-import ModalService from "@/services/ModalService";
-import { CustomModal, ModalDef } from "@/types/ui";
 import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { CustomModal, ModalDef } from "../types/uiTypes";
+import ModalService from "../services/ModalService";
 
 // context type
 interface ModalContextStateDef{

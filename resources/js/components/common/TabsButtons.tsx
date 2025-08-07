@@ -8,9 +8,12 @@ function TabsButtons({tabs}: {
 }) {
     const curTabIdx: number = useMemo(() => Math.max(0, tabs.findIndex(t => t.pathName === location.pathname)), [tabs]);
 
-    // on tab (update the affected pathname segment with the requested tab name)
+    // on tab (update the affected pathname segment with the requested tab name, and remove search query)
     function onTab(idx: number){
-        location.pathname = tabs[idx].pathName;
+        let url = new URL(location.href);
+        url.search = "";
+        url.pathname = tabs[idx].pathName;
+        location.href = url.href;
     }
 
     return (

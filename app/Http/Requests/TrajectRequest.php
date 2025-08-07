@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class TrajectRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class TrajectRequest extends FormRequest
     public function rules(): array
     {
         $requiredOrSometimes = $this->isMethod('POST') ? 'required' : 'sometimes';
-
+        
         return [
             'name' => [$requiredOrSometimes, 'string'],
             'stop_areas' => ["sometimes", "nullable", 'string'],

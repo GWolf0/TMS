@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Schedule;
 // TMS Instance
 $tms = TMSSystem::getInstance();
 
-// Automatic dropoff reservations processing schedule
-Schedule::call(fn () => ReservationsProcessingJob::dispatch(Reservation::$TYPES[0]))
-    ->dailyAt($tms->automatic_dropoff_processing_time);
+// dropoff reservations
+Schedule::job(new ReservationsProcessingJob(Reservation::$TYPES[0]))
+->dailyAt($tms->automatic_dropoff_processing_time);
 
-// Automatic pickup reservations processing schedule
-Schedule::call(fn () => ReservationsProcessingJob::dispatch(Reservation::$TYPES[1]))
+// pickup reservations
+Schedule::job(new ReservationsProcessingJob(Reservation::$TYPES[1]))
     ->dailyAt($tms->automatic_pickup_processing_time);
 
 

@@ -1,6 +1,6 @@
-import { HOST_URL } from "@/requests/requests";
-import { DOE, HTTPMethodType, HTTPRequest, JSONType } from "@/types/common";
-import { UserType } from "@/types/models";
+import { HOST_URL } from "../constants/constants";
+import { DOE, HTTPMethodType, HTTPRequest, JSONType } from "../types/common";
+import { UserType } from "../types/tablesModels";
 
 // mfetch (custom fetch method)
 export async function mfetch({url, method, params}: {
@@ -55,7 +55,7 @@ export async function mfetch({url, method, params}: {
         // get and log error
         const err: Error = e as Error;
         console.error(`Error fetching ${method} at ${url} ; ${HOST_URL + url}`);
-        console.error(`Sending ${params}`);
+        console.error(`Sending ${JSON.stringify(params)}`);
         console.error(err.message);
         console.error(err.stack);
     }finally{
@@ -77,7 +77,7 @@ export async function sendRequest(req: HTTPRequest, params: JSONType | undefined
 
     // append search query if exists
     if(searchQuery) url.search = searchQuery;
-    console.log("sending request", url.href.replace(url.origin, ""));
+    console.log("sending request, url:", url.href.replace(url.origin, ""), "method", req.method);
     console.log("params", params);
 
     // send

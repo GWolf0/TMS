@@ -1,11 +1,9 @@
-import { HTTPRequest } from "@/types/common";
-
 // Requests related types and constants
-// host url
-export const HOST_URL = "http://localhost:8000";
+
+import { HTTPMethodType, HTTPRequest } from "../types/common";
 
 // models (model name to table name)
-export enum Models {
+export enum TableModel {
     user = "users", organization = "organizations", vehicle = "vehicles", traject = "trajects",
     reservation = "reservations", shift = "shifts", conflict = "conflicts", tms_system = "tms_system",
 }
@@ -14,8 +12,8 @@ export enum CRUD_OPS {
     show = "get", index = "get", store = "post", update = "patch", destroy = "delete",
 }
 // types from above enums
-export type ModelsNames = keyof typeof Models;
-export type CRUD_OPS_Names = keyof typeof CRUD_OPS;
+export type TableModelName = keyof typeof TableModel;
+export type CRUD_OPS_Name = keyof typeof CRUD_OPS;
 
 // _________________________________________
 
@@ -50,17 +48,17 @@ export const RESET_PWD_REQ: HTTPRequest = {
 }
 
 // CRUD requests (ex: CRUD_REQ["user"]["show"], returns the request to show single users entry)
-export const CRUD_REQ: Record<ModelsNames, Record<CRUD_OPS_Names, HTTPRequest>> = Object.fromEntries(
-    Object.entries(Models).map(([modelName, tableName], i) => {
+export const CRUD_REQ: Record<TableModelName, Record<CRUD_OPS_Name, HTTPRequest>> = Object.fromEntries(
+    Object.entries(TableModel).map(([modelName, tableName]) => {
         const crudOps = Object.entries(CRUD_OPS).map(([crudKey, method]) => {
             const suffix = ["show", "update", "destroy"].includes(crudKey) ? "{id}" : "";
-            return [crudKey, { url: `/crud/${tableName}/${suffix}`, method }];
+            return [crudKey, { url: `/crud/${tableName}/${suffix}`, method: (method.toUpperCase() as HTTPMethodType) }];
         });
         return [modelName, Object.fromEntries(crudOps)];
     })
-) as Record<ModelsNames, Record<CRUD_OPS_Names, HTTPRequest>>;
+) as Record<TableModelName, Record<CRUD_OPS_Name, HTTPRequest>>;
 // helper function for crud requests get
-export function GetCRUDREQUEST(modelName: ModelsNames, op: CRUD_OPS_Names): HTTPRequest{
+export function GetCRUDREQUEST(modelName: TableModelName, op: CRUD_OPS_Name): HTTPRequest{
     return CRUD_REQ[modelName][op];
 }
 

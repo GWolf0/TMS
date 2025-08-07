@@ -2,7 +2,7 @@
 
 // capitalize
 export function strCapitalize(str: string): string{
-    if(str.length < 1) return str;
+    if(str.length === 0) return str;
     return str[0].toUpperCase() + str.substring(1);
 }
 
@@ -14,3 +14,6 @@ export function strPluralize(str: string): string {
     if(str.endsWith("s")) return str;
     return str + "s";
 }
+
+// remove "_id"
+export function strStripFKTrail(str: string): string { return str.replace("_id", ""); }

@@ -1,12 +1,12 @@
-import ErrorComp from '@/components/common/ErrorComp';
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import useFetch from '@/hooks/useFetch'
-import { SEND_PWD_RESET_EMAIL_REQ } from '@/requests/requests';
-import AlertService from '@/services/AlertService';
-import { DOE } from '@/types/common';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react'
+import ErrorComp from '../components/common/ErrorComp';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import useRequest from '../hooks/useRequest';
+import { SEND_PWD_RESET_EMAIL_REQ } from '../requests/requests';
+import AlertService from '../services/AlertService';
+import { DOE } from '../types/common';
 
 // Page contains form to send password request to specific email
 function ResetPasswordRequestPage() {
@@ -15,7 +15,7 @@ function ResetPasswordRequestPage() {
     const [performed, setPerformed] = useState<boolean>(false);
 
     // fetch hooks
-    const [performPWDResetRequest, pwdResetRequestLoading, pwdResetRequestDoe] = useFetch(SEND_PWD_RESET_EMAIL_REQ);
+    const [performPWDResetRequest, pwdResetRequestLoading, pwdResetRequestDoe] = useRequest(SEND_PWD_RESET_EMAIL_REQ);
 
     // actions
     async function onPWDResetRequest(e: React.FormEvent<HTMLFormElement>) {
@@ -33,7 +33,7 @@ function ResetPasswordRequestPage() {
         if(doe.error){
             AlertService.showAlert({id: -1, text: `Error sending password reset request email!`, severity: "error"});
         }else{
-            AlertService.showAlert({id: -1, text: `Password reset request email send successfuly!`});
+            AlertService.showAlert({id: -1, text: `Password reset request email sent successfuly!`});
         }
     }
 

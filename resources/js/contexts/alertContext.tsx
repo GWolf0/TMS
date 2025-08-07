@@ -1,6 +1,6 @@
-import AlertService from "@/services/AlertService";
-import { AlertDef } from "@/types/ui";
 import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { AlertDef } from "../types/uiTypes";
+import AlertService from "../services/AlertService";
 
 // context type
 interface AlertContextStateDef{

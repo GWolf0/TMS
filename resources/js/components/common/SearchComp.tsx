@@ -1,9 +1,9 @@
-import { FormDef, FormItemDef } from '@/types/ui'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import FormComp from './FormComp'
-import { DOE, JSONType } from '@/types/common'
+import FormComp from './formComp/FormComp'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { JSONType, DOE } from '../../types/common';
+import { FormItemDef, FormItemOptionDataPair } from '../../types/uiTypes';
 
 // search component
 // auto fills from url query params
@@ -13,7 +13,7 @@ function SearchComp({formItems, mainSearchItemIdx}: {
     mainSearchItemIdx: number,
 }) {
     // if form items is empty return null
-    if(formItems.length < 1) return null;
+    if(formItems.length === 0) return null;
 
     // refs
     const mainSearchItemInputRef = useRef<HTMLInputElement>(null);
@@ -23,9 +23,19 @@ function SearchComp({formItems, mainSearchItemIdx}: {
     const [showFilters, setShowFilters] = useState<boolean>(false); // toggle more filters section
     // prepared fileds (fields transformed for filtering based on field type)
     const preparedFields: FormItemDef[] = useMemo(() => prepareFormItems(formItems), [formItems]);
-
+    
     // get data from query string (passed to form at page load to fill)
     const data: JSONType = Object.fromEntries(new URLSearchParams(location.search).entries());
+
+    const filterKeys = Object.keys(data);
+    const hasFilters: boolean = filterKeys.length > 0 && !(filterKeys.length === 1 && filterKeys[0] === "page");
+
+    useEffect(() => {
+        if(mainSearchItemInputRef.current) {
+            const val = data[mainSearchItem.name];
+            if(val) mainSearchItemInputRef.current.value = val.replace(/^l_/, '');
+        }
+    }, []);
 
     // prepare form items for adequate filterable fields
     function prepareFormItems(formItems: FormItemDef[]): FormItemDef[]{
@@ -46,6 +56,8 @@ function SearchComp({formItems, mainSearchItemIdx}: {
                 ];
                 res.splice(i, 1, ...subtituteWith);
                 i++; // skip last added fields
+            }else if(f.type === "options") { // add any(*) for options fields
+                f.meta?.optionsData?.unshift({id: "*", label: "any"} as FormItemOptionDataPair);
             }
         }
 
@@ -83,7 +95,7 @@ function SearchComp({formItems, mainSearchItemIdx}: {
 
         // append filters if exists and showFilters is true
         if(showFilters && filters) Object.entries(filters).forEach(([k, v]) => {
-            if(v){
+            if(v && v !== "*"){ // * for all
                 const transformed = prepareKeyValue(k, v);
                 currSQ.set(transformed.name, transformed.value.toString()); 
             }
@@ -101,6 +113,10 @@ function SearchComp({formItems, mainSearchItemIdx}: {
         return {data: null, error: null};
     }
 
+    function onClearFilters() {
+        location.search = "";
+    }
+
     // render search filter form
     function renderSearchFiltersForm(){
         return (
@@ -108,10 +124,11 @@ function SearchComp({formItems, mainSearchItemIdx}: {
                 formDef={{
                     id: "search_form",
                     title: "Filters",
-                    items: preparedFields.filter((_, i) => i !== mainSearchItemIdx), // exclude the main search item
+                    items: preparedFields,
                     action: { name: "apply", displayName: "Apply", onValidatedData: onApplyFilters },
                 }}
                 data = {data}
+                hideTitle = {true}
             />
         )
     }
@@ -123,10 +140,16 @@ function SearchComp({formItems, mainSearchItemIdx}: {
                 <div className='grow'>
                     <Input ref={mainSearchItemInputRef} className='w-full' placeholder={"Search by " + (mainSearchItem.displayName || mainSearchItem.name.replaceAll("_", " "))} />
                 </div>
-                <Button variant={"default"} size={"icon"} onClick={onSearch}><i className='bi bi-search'></i></Button>
-                <Button variant={"default"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)}>
-                    <i className={`bi ${showFilters ? 'bi-x-lg' : 'bi-filter'}`}></i>
-                </Button>
+                <Button variant={"default"} size={"icon"} onClick={(e)=>onSearch()}><i className='bi bi-search'></i></Button>
+                {!hasFilters ?
+                    <Button variant={"default"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)} disabled={formItems.length <= 1}>
+                        <i className={`bi ${showFilters ? 'bi-x-lg' : 'bi-filter'}`}></i>
+                    </Button>
+                    :
+                    <Button variant={"default"} size={"icon"} onClick={onClearFilters}>
+                        <i className={`bi bi-x-lg`}></i>
+                    </Button>
+                }
             </div>
 
             {/* // Filters */}

@@ -1,6 +1,6 @@
 // Handle alerts
 
-import { AlertDef } from "@/types/ui";
+import { AlertDef } from "../types/uiTypes";
 
 export default class AlertService{
     static setAlerts: React.Dispatch<React.SetStateAction<AlertDef[]>>;
@@ -11,6 +11,7 @@ export default class AlertService{
 
     // appends alert
     static showAlert(alert: AlertDef){
+        alert.id = new Date().valueOf();
         AlertService.setAlerts(prev => [...prev, alert]);
     }
 

@@ -15,7 +15,14 @@ export interface EmployeeDashboardPageData{
     authorizations?: { 
         reserve_dropoff: boolean,
         reserve_pickup: boolean,
+        cancel_dropoff: boolean,
+        cancel_pickup: boolean,
     },
+    allowedTimes?: {
+        dropoff: string[],
+        pickup: string[],
+    },
+    trajects?: {id: number, label: string}[],
     paginatedReservations?: PaginatedData<JSONType>,
     profile?: JSONType,
 }

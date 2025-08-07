@@ -9,7 +9,7 @@ class Conflict extends Model
 {
     use HasFactory;
 
-    static $TYPES = ["no seats remaining"];
+    static $TYPES = ["no seats remaining", "no drivers remaining"];
 
     protected $fillable = [
         'type',

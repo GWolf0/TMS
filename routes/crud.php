@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 // routes for models crud ops
+// Route::middleware("auth")->patch("/crud/users/{id}", function (Request $req, $id) {
+//     Log::debug("!!!!!");
+//     return response()->json("yes");
+// });
 Route::group(["middleware" => ["auth"], "prefix" => "crud"], function (){
     Route::apiResource("users", UserController::class);
     Route::apiResource("organizations", OrganizationController::class);

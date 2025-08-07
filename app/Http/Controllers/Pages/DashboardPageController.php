@@ -4,7 +4,14 @@ namespace App\Http\Controllers\Pages;
 
 use App\Helpers\QueryHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ConflictResource;
+use App\Http\Resources\OrganizationResource;
+use App\Http\Resources\ReservationResource;
+use App\Http\Resources\ShiftResource;
+use App\Http\Resources\TMSSystemResource;
+use App\Http\Resources\TrajectResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\VehicleResource;
 use App\Models\Conflict;
 use App\Models\Organization;
 use App\Models\Reservation;
@@ -53,11 +60,11 @@ class DashboardPageController extends Controller{
         // slightly different data based on section
         if($section === "tms_system"){ // single record data
             $data = [
-                "data" => TMSSystem::getInstance(),
+                "data" => new TMSSystemResource(TMSSystem::getInstance()),
             ];
         }else if(!empty($queryBuilder)){ // paginated/filtered data
             $data = [
-                "paginatedData" => UserResource::collection(QueryHelper::searchFiltered($queryBuilder, $query)),
+                "paginatedData" => $this->resourceWrapped($section, QueryHelper::searchFiltered($queryBuilder, $query)),
             ];
         }else if($section === "profile"){ // send profile info
             $data = [
@@ -83,16 +90,24 @@ class DashboardPageController extends Controller{
         $query = $req->query();
 
         if($section === "reserve"){ // send today's dropoff and pickup reservations, and some authorizations
+            $todaysReservations = User::getEmployeeTodaysReservations($req->user()->id);
             $data = [
-                "todaysReservations" => User::getEmployeeTodaysReservations($req->user()->id),
+                "todaysReservations" => $todaysReservations,
                 "authorizations" => [
                     "reserve_dropoff" => Gate::allows("reserve_dropoff", [$req->user()]),
                     "reserve_pickup" => Gate::allows("reserve_pickup", [$req->user()]),
+                    "cancel_dropoff" => Gate::allows("cancel_dropoff", [$todaysReservations[0]?->resource]),
+                    "cancel_pickup" => Gate::allows("cancel_pickup", [$todaysReservations[1]?->resource]),
                 ],
+                "allowedTimes" => [
+                    "dropoff" => TMSSystem::getInstance()->getAvailableDropoffTimes(),
+                    "pickup" => TMSSystem::getInstance()->getAvailablePickupTimes(),
+                ],
+                "trajects" => new TrajectResource(Traject::select(["id", "name as label"])->get()),
             ];
         }else if($section === "reservations"){ // send paginated reservations
             $data = [
-                "paginatedReservations" => Reservation::where("user_id", $req->user()->id)->paginate(),
+                "paginatedReservations" => ReservationResource::collection(Reservation::with(Reservation::$WITH)->where("user_id", $req->user()->id)->orderBy("updated_at", "desc")->paginate()),
             ];
         }else if($section === "profile"){ // send profile info
             $data = [
@@ -132,6 +147,20 @@ class DashboardPageController extends Controller{
     // Get section helper
     private function getSection(Request $req, string $default){
         return $req->segment(2, $default);
+    }
+
+    // Resource wrapped (wrap paginated data with resource collcection)
+    private function resourceWrapped(string $tableName, $data) {
+        return match($tableName) {
+            "users" => UserResource::collection($data),
+            "organizations" => OrganizationResource::collection($data),
+            "vehicles" => VehicleResource::collection($data),
+            "trajects" => TrajectResource::collection($data),
+            "reservations" => ReservationResource::collection($data),
+            "shifts" => ShiftResource::collection($data),
+            "conflicts" => ConflictResource::collection($data),
+            default => null
+        };
     }
 
 }

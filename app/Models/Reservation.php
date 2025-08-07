@@ -13,7 +13,7 @@ class Reservation extends Model
     static $TYPES = ["dropoff", "pickup"];
 
     // eager loaded realations
-    public static $WITH = ["traject:id,name", "user:id,name"];
+    public static $WITH = ["traject:id,name", "user:id,name", "shift:number"];
 
     protected $fillable = [
         'type',
@@ -31,8 +31,8 @@ class Reservation extends Model
     ];
 
     // relations
-    public function traject(){ return $this->hasOne(Traject::class, "traject_id"); }
-    public function shift(){ return $this->hasOne(Shift::class, "shift_id"); }
-    public function user(){ return $this->hasOne(User::class, "user_id"); }
+    public function traject(){ return $this->belongsTo(Traject::class, "traject_id"); }
+    public function shift(){ return $this->belongsTo(Shift::class, "shift_id"); }
+    public function user(){ return $this->belongsTo(User::class, "user_id"); }
 
 }

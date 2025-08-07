@@ -1,10 +1,10 @@
-import { sendRequest } from "@/helpers/requestHelper";
-import { DOE, HTTPRequest, JSONType } from "@/types/common";
-import { UserType } from "@/types/models";
 import { useState } from "react";
+import { DOE, HTTPRequest, JSONType } from "../types/common";
+import { UserType } from "../types/tablesModels";
+import { sendRequest } from "../helpers/requestHelper";
 
 // hook to handle fetching requests and loading (returns fetch handler, loading bool, doe object)
-export default function useFetch(req: HTTPRequest, defaultLoadingState?: boolean): [
+export default function useRequest(req: HTTPRequest, defaultLoadingState?: boolean): [
     (params?: JSONType, searchQuery?: string, user?: UserType | null) => Promise<DOE>, boolean, DOE | undefined,
 ] {
     const [loading, setLoading] = useState<boolean>(defaultLoadingState ?? false);

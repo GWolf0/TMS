@@ -1,29 +1,25 @@
 import React from 'react'
 import MainLayout from './MainLayout'
-import { DashboardSectionDef } from '@/types/dashboard'
-import TabsButtons from '@/components/common/TabsButtons'
-import DashboardWidget from '@/components/dashboard/widgets/DashboardWidget'
-import { UserType } from '@/types/models'
+import { UserType } from '../types/tablesModels';
+import TabsButtons from '../components/common/TabsButtons';
+import { DashboardSection, DashboardSectionDef } from '../types/dashboardTypes';
 
-function DashBoardLayout({sections, user}: {
-    sections: DashboardSectionDef[], user: UserType,
+function DashBoardLayout({user, sections, children}: {
+    user: UserType, sections: DashboardSectionDef[], children: React.ReactNode,
 }) {
-    const curSectionIdx: number = Math.max(0, sections.findIndex(s => s.pathName === location.pathname));
 
     return (
         <MainLayout>
 
             {/* // sections tabs */}
             <TabsButtons 
-                tabs={sections.map((s, i) => ({ name: s.name, displayName: s.name.replaceAll("_", " ").toUpperCase(), pathName: s.pathName }))}
+                tabs={sections.map((s, i) => ({ name: s.name, displayName: s.displayName, pathName: `/dashboard/${s.name}` }))}
             />
 
             {/* // widgets */}
             <div className='flex flex-col gap-4 mt-8'>
 
-                {
-                    sections[curSectionIdx].widgets.map((w, i) => <DashboardWidget key={i} widget={w} />)
-                }
+                { children }
 
             </div>
 
