@@ -20,6 +20,7 @@ function DataTable({title, pdata, actions, substituteFKsWithLabels, hiddenKeys, 
 }) {
     const data: JSONType[] = useMemo(() => pdata.data, [pdata]);
     const hasLabels: boolean = useMemo(() => data && data.length > 0 && Object.hasOwn(data[0], "labels"), [data]);
+    // filter columns names based on hiddenKeys or only
     const colsNames: string[] = useMemo(() => data.length > 0 ? 
         (
             hiddenKeys != undefined ?
@@ -52,7 +53,7 @@ function DataTable({title, pdata, actions, substituteFKsWithLabels, hiddenKeys, 
     // render action
     function renderAction(action: DataTableActionDef, rowIdx: number, data: JSONType){
         return (
-            <Button title={action.name} onClick={()=>action.callback(rowIdx, data)} size={"icon"}>
+            <Button title={action.name} onClick={()=>action.callback(rowIdx, data)} size={"icon"} variant={"secondary"}>
                 {action.icon && <i className={`${action.icon}`}></i>}
                 {!action.icon && action.name}
             </Button>
@@ -67,7 +68,7 @@ function DataTable({title, pdata, actions, substituteFKsWithLabels, hiddenKeys, 
             <div className='ml-auto flex gap-2 items-center'>
                 {
                     topActions.map((act, i) => (
-                        <Button key={i} onClick={act.callback}>
+                        <Button key={i} onClick={act.callback} variant={"secondary"}>
                             {act.icon && <i className={`${act.icon}`}></i>} {act.name}
                         </Button>
                     ))

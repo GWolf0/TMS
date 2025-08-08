@@ -17,7 +17,7 @@ use App\Interfaces\ISettingsController;
 use Inertia\Response as InertiaResponse;
 
 class SettingsController extends Controller implements ISettingsController{
-    const RESET_PWD_PAGE_NAME = "ResetPasswordRequestPage";
+    const RESET_PWD_PAGE_NAME = "ResetPasswordPage";
 
     // send email verification notification
     public function sendEmailVerificationNotification(Request $request): JsonResponse{

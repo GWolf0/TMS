@@ -39,7 +39,7 @@ function LoginPage() {
         if(validation.success){
             const doe: DOE = await fetchLogin(validation.data);
             if(doe.error){
-                AlertService.showAlert({id: -1, text: `Error Login: ${doe.error}`});
+                AlertService.showAlert({id: -1, text: `Error Login: ${doe.error.message}`});
             }
         }else{
             AlertService.showAlert({id: -1, text: `Error Login: ${validation.error.message}`});
@@ -55,7 +55,7 @@ function LoginPage() {
                 <div className='mx-auto flex flex-col gap-8 md:border px-4 py-16 rounded' style={{width: 'min(100%, 480px)'}}>
                     {/* // Logo */}
                     <div className='flex items-center justify-center py-4'>
-                        <Logo width={128} />
+                        <Logo width={128} noText />
                     </div>
 
                     {/* // Login Form */}
@@ -85,7 +85,9 @@ function LoginPage() {
 
                     {/* // Extra actions */}
                     <div className=' flex flex-col gap-1 items-center justify-center'>
-                        <Button variant={"link"}>Request password reset</Button>
+                        <Button variant={"link"} asChild>
+                            <a href="/reset-password-request">Request password reset</a>
+                        </Button>
                     </div>
 
                 </div>

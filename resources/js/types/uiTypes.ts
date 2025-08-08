@@ -18,7 +18,6 @@ export interface FormItemDef{
     type: FormItemType,
     meta?: FormItemMeta,
     readonly?: boolean,
-    inputProps?: JSONType,
 }
 
 export interface FormAction{
@@ -36,6 +35,7 @@ export interface FormDef{
     id: string,
     title: string,
     items: FormItemDef[],
+    itemsInputsProps?: JSONType[],
     action: FormAction,
 }
 

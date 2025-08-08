@@ -140,13 +140,13 @@ function SearchComp({formItems, mainSearchItemIdx}: {
                 <div className='grow'>
                     <Input ref={mainSearchItemInputRef} className='w-full' placeholder={"Search by " + (mainSearchItem.displayName || mainSearchItem.name.replaceAll("_", " "))} />
                 </div>
-                <Button variant={"default"} size={"icon"} onClick={(e)=>onSearch()}><i className='bi bi-search'></i></Button>
+                <Button variant={"secondary"} size={"icon"} onClick={(e)=>onSearch()}><i className='bi bi-search'></i></Button>
                 {!hasFilters ?
-                    <Button variant={"default"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)} disabled={formItems.length <= 1}>
+                    <Button variant={"secondary"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)} disabled={formItems.length <= 1}>
                         <i className={`bi ${showFilters ? 'bi-x-lg' : 'bi-filter'}`}></i>
                     </Button>
                     :
-                    <Button variant={"default"} size={"icon"} onClick={onClearFilters}>
+                    <Button variant={"secondary"} size={"icon"} onClick={onClearFilters}>
                         <i className={`bi bi-x-lg`}></i>
                     </Button>
                 }

@@ -21,7 +21,8 @@ function AdminDashboardCRUDModelSection({data, model}: {
 }) {
     // data
     const modelDef: TableModelDef = useMemo(() => getTableModelDef(model), [model]);
-    const pdata: PaginatedData<JSONType> = useMemo(() => dataToPaginatedData(data.paginatedData), [data]);
+    // const pdata: PaginatedData<JSONType> = useMemo(() => dataToPaginatedData(data.paginatedData), [data]);
+    const [pdata, setPData] = useState< PaginatedData<JSONType>>(dataToPaginatedData(data.paginatedData));
     const searchItems: FormItemDef[] = useMemo(() => modelDef.formItems.filter(fi => modelDef.searchFields.includes(fi.name)), [modelDef]);
 
     // states
@@ -36,6 +37,7 @@ function AdminDashboardCRUDModelSection({data, model}: {
                 modelName={modelDef.name}
                 mode={"create"}
                 data={undefined}
+                onSuccess={onSuccess}
             />
         });
     }
@@ -48,8 +50,24 @@ function AdminDashboardCRUDModelSection({data, model}: {
                 modelName={modelDef.name}
                 mode={"update"}
                 data={data}
+                onSuccess={onSuccess}
             />
         });
+    }
+
+    function onSuccess(record: JSONType, mode: "create"|"update") {
+        if(mode === "create") { // prepend recently created record
+            setPData(prev => ({...prev, data: [{...record}, ...prev.data]}));
+        }else { // update updated record
+            setPData(prev => ({...prev, data: prev.data.map((d => {
+                if(d["id"] === record["id"]) {
+                    return {...record};
+                }
+                return d;
+            }))}));
+        }
+
+        ModalService.closeCustomModal(SINGLE_RECORD_EDITOR_MODAL_ID);
     }
 
     async function onDeleteActionBtn(rowIdx: number, data: JSONType) {

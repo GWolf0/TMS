@@ -2,7 +2,8 @@ import React from 'react'
 import { FormItemOptionDataPair } from '../../types/uiTypes'
 
 function MSelect({name, defaultValue, attributes, options}: {
-    name: string, defaultValue: string, attributes: Record<string, any> | null, options: FormItemOptionDataPair[] | undefined,
+    name: string, defaultValue: string, attributes: Record<string, any> | null | undefined,
+    options: FormItemOptionDataPair[] | undefined,
 }) {
 
 

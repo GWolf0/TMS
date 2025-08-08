@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('status', Reservation::$STATUSES);
             $table->date('date');
             $table->time('time');
-            $table->foreignId('traject_id')->constrained('trajects', 'id')->onDelete('set null');
+            $table->foreignId('traject_id')->nullable()->constrained('trajects', 'id')->onDelete('set null');
             $table->foreignId('shift_id')->nullable()->constrained('shifts', 'id')->onDelete('set null');
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->timestamps();

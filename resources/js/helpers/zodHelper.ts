@@ -16,27 +16,27 @@ export function getInputAttributes(schema: ZodTypeAny) {
     const def = schema._def;
     const attrs: Record<string, any> = {};
 
-    if (schema.isOptional()) {
+    if (schema.isOptional() || schema.isNullable()) {
         attrs.required = false;
     } else {
         attrs.required = true;
     }
 
     if (schema instanceof ZodString) {
-    const checks = def.checks || [];
-    for (const check of checks) {
-        if (check.kind === "min") attrs.minLength = check.value;
-        if (check.kind === "max") attrs.maxLength = check.value;
-        if (check.kind === "regex") attrs.pattern = check.regex.source;
-    }
+        const checks = def.checks || [];
+        for (const check of checks) {
+            if (check.kind === "min") attrs.minLength = check.value;
+            if (check.kind === "max") attrs.maxLength = check.value;
+            if (check.kind === "regex") attrs.pattern = check.regex.source;
+        }
     }
 
     if (schema instanceof ZodNumber) {
-    const checks = def.checks || [];
-    for (const check of checks) {
-        if (check.kind === "min") attrs.min = check.value;
-        if (check.kind === "max") attrs.max = check.value;
-    }
+        const checks = def.checks || [];
+        for (const check of checks) {
+            if (check.kind === "min") attrs.min = check.value;
+            if (check.kind === "max") attrs.max = check.value;
+        }
     }
 
     return attrs;

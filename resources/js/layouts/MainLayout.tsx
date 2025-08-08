@@ -33,7 +33,7 @@ function MainLayout({children}: {
                             </Button>
                         </div>
                     ]:[
-                        <Button>Login</Button>
+                        <Button asChild><a href='/login'>Login</a></Button>
                     ]}
                 />
             }

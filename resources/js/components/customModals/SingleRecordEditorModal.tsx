@@ -8,17 +8,18 @@ import SingleRecordEditor from '../CRUD/SingleRecordEditor';
 export const SINGLE_RECORD_EDITOR_MODAL_ID = -1;
 
 // Modal to create/edit a record
-function SingleRecordEditorModal({model, modelName, title, mode, data}: {
+function SingleRecordEditorModal({model, modelName, title, mode, data, onSuccess}: {
     model: TableModel, 
     modelName: TableModelName, 
     title?: string,
     mode: "create" | "update",
     data?: JSONType,
+    onSuccess?: (record: JSONType, mode: "create"|"update") => any,
 }) {
 
     function getTitle(): string { return `${mode} ${String(modelName)}`; }
 
-    // render header
+    // render fns
     function renderHeader(): React.ReactNode{
         return (
             <p className='capitalize'>{ getTitle() }</p>
@@ -34,6 +35,7 @@ function SingleRecordEditorModal({model, modelName, title, mode, data}: {
                 title={title}
                 mode={mode}
                 data={data}
+                onSuccess={onSuccess}
                 hideTitle
             />
         )

@@ -9,13 +9,14 @@ import AlertService from '../../services/AlertService';
 import { getTableModelDef, TableModelDef } from '../../helpers/tablesModelsHelper';
 
 // returns a form to edit/create a record
-function SingleRecordEditor({model, modelName, title, mode, data, hideTitle}: {
+function SingleRecordEditor({model, modelName, title, mode, data, hideTitle, onSuccess}: {
     model: TableModel, 
     modelName: TableModelName, 
     title?: string,
     mode: "create" | "update",
     data?: JSONType,
     hideTitle?: boolean,
+    onSuccess?: (record: JSONType, mode: "create"|"update") => any,
 }){
     const modelDef: TableModelDef = useMemo(() => getTableModelDef(model), [model]);
     const columns: string[] = useMemo(() => mode === "create" ? modelDef.createFields : modelDef.updateFields, [mode]);
@@ -38,6 +39,7 @@ function SingleRecordEditor({model, modelName, title, mode, data, hideTitle}: {
             AlertService.showAlert({id: -1, text: "Error creating new record!", severity: "error"});
         }else{
             AlertService.showAlert({id: -1, text: "New record created successfuly!"});
+            if(doe.data && onSuccess) onSuccess(doe.data, "create");
         }
 
         return doe;
@@ -51,6 +53,7 @@ function SingleRecordEditor({model, modelName, title, mode, data, hideTitle}: {
             AlertService.showAlert({id: -1, text: "Error updating record!", severity: "error"});
         }else{
             AlertService.showAlert({id: -1, text: "Record updated successfuly!"});
+            if(doe.data && onSuccess) onSuccess(doe.data, "update");
         }
 
         return doe;

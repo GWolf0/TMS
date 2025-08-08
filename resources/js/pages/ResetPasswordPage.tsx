@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import AlertService from '../services/AlertService';
 import { DOE } from '../types/common';
+import MainLayout from '../layouts/MainLayout';
 
 // Page contains form to reset password (typically triggered by reset password link from user email)
 function ResetPasswordPage() {
@@ -29,7 +30,9 @@ function ResetPasswordPage() {
         const password_confirmation: string = fd.get("password_confirmation")!.toString();
         const token: string = fd.get("token")!.toString();
 
-        const doe: DOE = await performPWDReset({email, password, password_confirmation, token});
+        const params = {email, password, password_confirmation, token};
+        console.log("params", params);
+        const doe: DOE = await performPWDReset(params);
 
         setPerformed(true);
 
@@ -44,7 +47,7 @@ function ResetPasswordPage() {
     // get token
     function getToken(): string | undefined{
         const segments: string[] = location.pathname.split("/").filter(s => Boolean(s));
-        return segments[1];
+        return segments[2];
     }
 
     // Render functions
@@ -71,11 +74,13 @@ function ResetPasswordPage() {
     }
 
     return (
-        <main>
-            <p className='mb-8'>Reset password</p>
+        <MainLayout>
+            <main>
+                <p className='mb-8 underline'>Reset password</p>
 
-            { renderPWDResetForm() }
-        </main>
+                { renderPWDResetForm() }
+            </main>
+        </MainLayout>
     )
 
 }

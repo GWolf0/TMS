@@ -6,11 +6,12 @@ import FormFKChooserModal, { FK_FORM_MODAL_CHOOSER_ID } from '../../customModals
 import { ZodTypeAny } from 'zod'
 import ErrorComp from '../ErrorComp'
 import MSelect from '../../ui/MSelect'
-import { FormAction, FormDef } from '../../../types/uiTypes'
+import { FormAction, FormDef, FormItemDef } from '../../../types/uiTypes'
 import { DOE, JSONType } from '../../../types/common'
 import FormCompItem from './FormCompItem'
 import { formFKLabelKey } from '../../../helpers/formHelper'
-import { pickFromZod } from '../../../helpers/zodHelper'
+import { getInputAttributes, pickFromZod } from '../../../helpers/zodHelper'
+import { LoaderCircleIcon } from 'lucide-react'
 
 function FormComp({formDef, data, hideTitle}: {
     formDef: FormDef, data?: JSONType, hideTitle?: boolean,
@@ -32,9 +33,25 @@ function FormComp({formDef, data, hideTitle}: {
                     item={item}
                     defaultValue={data && Object.hasOwn(data, item.name) ? data[item.name] : undefined}
                     fkLabel={data && data.labels && Object.hasOwn(data.labels, formFKLabelKey(item.name)) ? data.labels[formFKLabelKey(item.name)] : undefined}
+                    inputProps={getFormItemInputsProps(item)}
                 />
             </div>
         ))
+    }
+
+    // get form item input props (input confirmation attributes)
+    function getFormItemInputsProps(item: FormItemDef): JSONType {
+        // if specified explicitly in formdef itemsInputsProps
+        if(formDef.itemsInputsProps && Object.hasOwn(formDef.itemsInputsProps, item.name)) {
+            return formDef.itemsInputsProps[item.name];
+        }
+        // get from action zod validation
+        if(formDef.action.validation) {
+            const zodDef = formDef.action.validation.shape[item.name];
+            if(zodDef) return getInputAttributes(zodDef);
+        }
+        // default to required except for boolean items
+        return item.type !== "boolean" ? {required: true} : {required: false};
     }
 
     // on form submit
@@ -112,7 +129,7 @@ function FormComp({formDef, data, hideTitle}: {
                 {/* // action if authorized */}
                 {<div className='flex gap-4 mt-8 items-center flex-row-reverse'>
                     <Button variant={"default"} type='submit' disabled={loading || formDef.action.authorization === false || !canPerformAction}>
-                        { formDef.action.displayName }
+                        { loading ? <LoaderCircleIcon className='animate-spin' /> : formDef.action.displayName }
                     </Button>
                 </div>}
             </form>

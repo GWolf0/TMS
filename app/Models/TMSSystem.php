@@ -7,6 +7,7 @@ use Database\Factories\TMSSystemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class TMSSystem extends Model
 {
@@ -54,14 +55,17 @@ class TMSSystem extends Model
 
     public static function getInstance(){
         if(empty(TMSSystem::$instance)){
-            TMSSystem::$instance = TMSSystem::first();
+            TMSSystem::invalidateInstance();
         }
-        // Log::debug(TMSSystem::$instance);
         return TMSSystem::$instance;
     } 
 
     public static function invalidateInstance(){ // reset instance (call if updated and still gonna use it later in same current request)
-        TMSSystem::$instance = TMSSystem::first();
+        if(Schema::hasTable("tms_system")) {
+            TMSSystem::$instance = TMSSystem::first();
+        } else {
+            TMSSystem::$instance = TMSSystem::factory()->makeOne();
+        }
     }
 
     // helpers

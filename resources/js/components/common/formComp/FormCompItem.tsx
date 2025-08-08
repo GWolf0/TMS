@@ -6,11 +6,12 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import MSelect from '../../ui/MSelect';
 import FormFKItem from './FormFKItem';
+import { JSONType } from '../../../types/common';
 
-function FormCompItem({item, defaultValue, fkLabel}: {
-    item: FormItemDef, defaultValue: string | number | boolean, fkLabel: string | undefined,
+function FormCompItem({item, defaultValue, fkLabel, inputProps}: {
+    item: FormItemDef, defaultValue: string | number | boolean, fkLabel: string | undefined, inputProps?: JSONType,
 }) {
-    const inputProps = useMemo(() => item.inputProps ?? {}, [item]);
+    inputProps = inputProps ?? undefined;
 
     switch(item.type){
         case "hidden":

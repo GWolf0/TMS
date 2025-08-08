@@ -7,6 +7,7 @@ import useRequest from '../hooks/useRequest';
 import { SEND_PWD_RESET_EMAIL_REQ } from '../requests/requests';
 import AlertService from '../services/AlertService';
 import { DOE } from '../types/common';
+import MainLayout from '../layouts/MainLayout';
 
 // Page contains form to send password request to specific email
 function ResetPasswordRequestPage() {
@@ -50,7 +51,7 @@ function ResetPasswordRequestPage() {
 
                 <div className='flex items-center justify-end'>
                     <Button type='submit' disabled={pwdResetRequestLoading || performed}>
-                        { pwdResetRequestLoading ? <LoaderCircle className='animate-spin' /> : <p>Send</p> }
+                        { pwdResetRequestLoading ? <LoaderCircle className='animate-spin' /> : <p>Send Reset Link To Email</p> }
                     </Button>
                 </div>
             </form>
@@ -58,11 +59,15 @@ function ResetPasswordRequestPage() {
     }
 
     return (
-        <main>
-            <p className='mb-8'>Send password reset email</p>
+        <MainLayout>
 
-            { renderPWDResetRequestForm() }
-        </main>
+            <main>
+                <p className='mb-8 underline'>Send password reset email</p>
+
+                { renderPWDResetRequestForm() }
+            </main>
+
+        </MainLayout>
     )
 
 }

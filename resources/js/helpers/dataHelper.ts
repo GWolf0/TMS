@@ -37,6 +37,8 @@ export function jsonToFormData(json: JSONType): FormData {
 
 // data to string (based on form item type return adequate string representation)
 export function dataToString(name: string, data: any, dataType: FormItemType, labels?: JSONType): string{
+    if(data === null || data === undefined) return "N/A";
+    
     switch(dataType){
         case "boolean":
             return data ? "Yes" : "No";

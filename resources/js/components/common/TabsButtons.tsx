@@ -17,11 +17,12 @@ function TabsButtons({tabs}: {
     }
 
     return (
-        <div className='flex p-2 items-center gap-2 md:gap-4 overflow-x-auto bg-muted rounded'>
+        <div className='flex p-2 items-center gap-2 md:gap-2.5 overflow-x-auto bg-muted rounded'>
             {
                 tabs.map((t, i) => (
                     <Button key={i} 
-                        variant={curTabIdx === i ? "default" : "outline"}
+                        className='disabled:opacity-100'
+                        variant={curTabIdx === i ? "default" : "link"}
                         disabled={curTabIdx === i}
                         onClick={()=>onTab(i)}
                     >

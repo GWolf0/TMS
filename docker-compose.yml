@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tms-app
+    ports:
+      - "8000:8000"    # Laravel backend
+      - "5173:5173"    # Vite dev server
+    volumes:
+      - .:/var/www
+      - .env.docker:/var/www/.env
+    working_dir: /var/www
+    depends_on:
+      - mariadb
+      - redis
+      - phpmyadmin
+    command: sh -c "composer install && php artisan migrate:fresh && php artisan db:seed && composer run dev"
+
+  # vite:
+  #   image: node:18
+  #   container_name: tms-vite
+  #   working_dir: /var/www
+  #   volumes:
+  #     - .:/var/www
+  #   ports:
+  #     - "5173:5173"
+  #   command: sh -c "npm install && npm run dev"
+
+  mariadb:
+    image: mariadb:11
+    container_name: tms-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tms
+      MYSQL_USER: tmsuser
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    mem_limit: 512m
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+
+  redis:
+    image: redis:alpine
+    container_name: tms-redis
+    restart: unless-stopped
+    mem_limit: 100m
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: tms-mailpit
+    ports:
+      - "8025:8025"   # Mail UI
+    mem_limit: 50m
+
+volumes:
+  mariadb_data:
