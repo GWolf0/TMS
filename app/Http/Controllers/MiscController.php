@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 
 class MiscController extends Controller{
 
@@ -35,6 +37,16 @@ class MiscController extends Controller{
     // get constants
     public function getConsts(Request $req): JsonResponse{
         return response()->json(config('consts'));
+    }
+
+    // set locale
+    public function setlocale(Request $req, string $locale): JsonResponse {
+        if(!in_array($locale, ["en", "fr"]))
+            return response()->json(["message" => __("Unsupported locale")], 400);
+        
+        App::setLocale($locale);
+        Session::put('locale', $locale);
+        return response()->json(true);
     }
 
 }

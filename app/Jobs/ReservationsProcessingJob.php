@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\TMSSystem;
 use App\Services\ReservationsProcessingService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -25,7 +26,15 @@ class ReservationsProcessingJob implements ShouldQueue
     public function handle(): void
     {
         Log::info("RPS Job started for type: {$this->type}");
+        
+        TMSSystem::getInstance()->is_processing_shifts = true;
+        TMSSystem::getInstance()->save();
+
         ReservationsProcessingService::processReservations($this->type);
+        
+        TMSSystem::getInstance()->is_processing_shifts = false;
+        TMSSystem::getInstance()->save();
+
         Log::info("RPS Job completed for type: {$this->type}");
     }
 

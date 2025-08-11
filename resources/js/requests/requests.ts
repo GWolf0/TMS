@@ -122,3 +122,7 @@ export const MISC_CONSTS_REQ: HTTPRequest = {
     url: "/misc/consts",
     method: "GET",
 };
+export const MISC_SET_LOCALE_REQ: HTTPRequest = {
+    url: "/misc/locale/{locale}",
+    method: "PUT",
+};

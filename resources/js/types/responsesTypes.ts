@@ -8,6 +8,9 @@ export interface AdminDashboardPageData{
     data?: JSONType,
     profile?: JSONType,
     authorizations?: { start_reservations_processing: boolean, },
+    is_processing_shifts?: boolean,
+    auto_dropoff_processing_time?: string,
+    auto_pickup_processing_time?: string,
 }
 
 export interface EmployeeDashboardPageData{

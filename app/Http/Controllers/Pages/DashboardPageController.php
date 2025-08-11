@@ -76,6 +76,8 @@ class DashboardPageController extends Controller{
                     "start_reservations_processing" => Gate::allows('start_reservations_processing'),
                 ],
                 "is_processing_shifts" => TMSSystem::getInstance()->is_processing_shifts,
+                "auto_dropoff_processing_time" => TMSSystem::getInstance()->automatic_dropoff_processing_time,
+                "auto_pickup_processing_time" => TMSSystem::getInstance()->automatic_pickup_processing_time,
             ];
         }else{
             abort(404, "Invalid dashboard section.");

@@ -9,13 +9,14 @@ import { TableModel } from '../../../requests/requests';
 import AdminDashboardTMSSystemSection from './AdminDashboardTMSSystemSection';
 import AdminDashboardCRUDModelSection from './AdminDashboardCRUDModelSection';
 import UserDashboardProfileSection from '../common/UserDashboardProfileSection';
+import AdminDashboardActionsSection from './AdminDashboardActionsSection';
 
 // admin dashboard
 function AdminDashboard({user, data}: {
     user: UserType, data: AdminDashboardPageData,
 }) {
     const tmpCurSection = location.pathname.split("/")[2];
-    const validSections: AdminDashboardSection[] = ["users", "tms_system", "organizations", "trajects", "vehicles", "reservations", "shifts", "conflicts", "profile"];
+    const validSections: AdminDashboardSection[] = ["users", "tms_system", "organizations", "trajects", "vehicles", "reservations", "shifts", "conflicts", "actions", "profile"];
 
     // redirect to default section if not specified or invalid
     if(!tmpCurSection || !validSections.includes(tmpCurSection as AdminDashboardSection)) {
@@ -49,6 +50,8 @@ function AdminDashboard({user, data}: {
                 )
             } else if(curSectionName === "profile") {
                 return <UserDashboardProfileSection user={user} profileData={data.profile} />;
+            }else if(curSectionName === "actions") {
+                return <AdminDashboardActionsSection data={data} />;
             } else { // other crud models
                 return crudModel ? (
                     <AdminDashboardCRUDModelSection 
