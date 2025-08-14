@@ -18,7 +18,7 @@ class TrajectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->randomElement(Traject::SAMPLE_TRAJECTS),
+            'name' => fake()->unique()->randomElement(Traject::SAMPLE_TRAJECTS),
             'stop_areas' => null,
         ];
     }

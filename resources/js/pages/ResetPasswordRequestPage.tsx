@@ -59,7 +59,7 @@ function ResetPasswordRequestPage() {
     }
 
     return (
-        <MainLayout>
+        <MainLayout pageName='reser-password-request'>
 
             <main>
                 <p className='mb-8 underline'>Send password reset email</p>

@@ -10,8 +10,9 @@ import { FormAction, FormDef, FormItemDef } from '../../../types/uiTypes'
 import { DOE, JSONType } from '../../../types/common'
 import FormCompItem from './FormCompItem'
 import { formFKLabelKey } from '../../../helpers/formHelper'
-import { getInputAttributes, pickFromZod } from '../../../helpers/zodHelper'
+import { formatZodError, getInputAttributes, pickFromZod } from '../../../helpers/zodHelper'
 import { LoaderCircleIcon } from 'lucide-react'
+import { dataToInputData, dataToString } from '../../../helpers/dataHelper'
 
 function FormComp({formDef, data, hideTitle}: {
     formDef: FormDef, data?: JSONType, hideTitle?: boolean,
@@ -31,7 +32,10 @@ function FormComp({formDef, data, hideTitle}: {
                 {/* // try pass data to form item if exists, and fks if exists */}
                 <FormCompItem 
                     item={item}
-                    defaultValue={data && Object.hasOwn(data, item.name) ? data[item.name] : undefined}
+                    defaultValue={data && Object.hasOwn(data, item.name) ? 
+                        dataToInputData(item.name, data[item.name], item.type) : 
+                        undefined
+                        }
                     fkLabel={data && data.labels && Object.hasOwn(data.labels, formFKLabelKey(item.name)) ? data.labels[formFKLabelKey(item.name)] : undefined}
                     inputProps={getFormItemInputsProps(item)}
                 />
@@ -64,35 +68,32 @@ function FormComp({formDef, data, hideTitle}: {
         if(!action.allowPageReload) e.preventDefault();
         if(!canPerformAction) return;
 
-        // get json from fd entries
+        // Get JSON from FormData
         let data: JSONType = Object.fromEntries(fd.entries());
-        
-        // format boolean fields
-        const entries = Object.entries(data);
-        for(let i = 0; i < entries.length; i++) {
-            const [key, val] = entries[i];
-            console.log(key, val)
+
+        // Filter required fields if specified
+        if(action.requiredFields && action.requiredFields.length > 0) {
+            data = Object.fromEntries(
+                Object.entries(data).filter(([key]) => action.requiredFields!.includes(key))
+            );
+        }
+
+        // Format boolean fields
+        for(const [key, val] of Object.entries(data)) {
             const fi = formDef.items.find(it => it.name === key);
             if(fi?.type === "boolean") {
-                data[i] = {key: Boolean(val)};
-            }else {
-                data[i] = {key: val};
+                data[key] = val === "true" || val === "on" || val === "1";
             }
         }
 
-        // include only required fields if specified
-        if(action.requiredFields && action.requiredFields.length > 0) {
-            data = Object.entries(data).filter(keyval => action.requiredFields?.includes(keyval[0]));
-        }
-        
-        console.log("data", data, Object.keys(data));
+        console.table(data);
         
         // validate zod if exists
         const keys = Object.keys(data);
         const filteredValidation = action.validation ? pickFromZod(action.validation, keys) : undefined;
-        const validation = filteredValidation ? filteredValidation.safeParse(data) : {success: true, data};
+        const validation = filteredValidation ? filteredValidation.safeParse(data) : {success: true, data, error: undefined};
 
-        // console.log(validation)
+        console.log(validation)
 
         // send request and/or perform callbacj if valid
         if(validation.success){
@@ -109,7 +110,7 @@ function FormComp({formDef, data, hideTitle}: {
                 if(action.oneTimePerPageLoad) setCanPerformAction(false);
             }
         }else{
-            setDoe({error: {message: "Validation error"}});
+            setDoe({error: {message: "Validation error: " + formatZodError(validation.error)}});
         }
     }
 

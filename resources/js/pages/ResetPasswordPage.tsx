@@ -8,6 +8,8 @@ import { Input } from '../components/ui/input';
 import AlertService from '../services/AlertService';
 import { DOE } from '../types/common';
 import MainLayout from '../layouts/MainLayout';
+import z3, { z } from 'zod';
+import { formatZodError } from '../helpers/zodHelper';
 
 // Page contains form to reset password (typically triggered by reset password link from user email)
 function ResetPasswordPage() {
@@ -31,13 +33,23 @@ function ResetPasswordPage() {
         const token: string = fd.get("token")!.toString();
 
         const params = {email, password, password_confirmation, token};
-        console.log("params", params);
-        const doe: DOE = await performPWDReset(params);
+        const validation = z.object({
+            email: z.string().email(),
+            password: z.string().min(8).max(32),
+            password_confirmation: z.string().min(8).max(32),
+            token: z.string(),
+        }).safeParse(params);
 
-        setPerformed(true);
+        let doe: DOE;
+        if(!validation.success) {
+            doe = {error: {message: formatZodError(validation.error)}};
+        } else {
+            doe = await performPWDReset(params);
+            setPerformed(true);
+        }
 
         if(doe.error){
-            AlertService.showAlert({id: -1, text: `Error resetubg password!`, severity: "error"});
+            AlertService.showAlert({id: -1, text: `Error reseting password: ${doe.error.message}`, severity: "error"});
         }else{
             AlertService.showAlert({id: -1, text: `Password reset successfuly!`});
         }
@@ -74,7 +86,7 @@ function ResetPasswordPage() {
     }
 
     return (
-        <MainLayout>
+        <MainLayout pageName='reset-password'>
             <main>
                 <p className='mb-8 underline'>Reset password</p>
 

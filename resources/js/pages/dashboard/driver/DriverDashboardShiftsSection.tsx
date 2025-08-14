@@ -25,6 +25,8 @@ function DriverDashboardShiftsSection({data}: {
 
         if(doe.error) {
             AlertService.showAlert({id: 0, text: doe.error.message ?? "Error updating availability!", severity: "error"});
+        } else {
+            AlertService.showAlert({id: 0, text: "Availability updated!"});
         }
 
         return doe;

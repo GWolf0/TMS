@@ -1,5 +1,5 @@
 // zod related helpers
-import { ZodObject, ZodTypeAny, ZodString, ZodNumber } from "zod";
+import { ZodObject, ZodTypeAny, ZodString, ZodNumber, ZodError } from "zod";
 
 
 // pick from zod schema
@@ -41,4 +41,16 @@ export function getInputAttributes(schema: ZodTypeAny) {
 
     return attrs;
 }
+
+// zod error to message
+
+export function formatZodError(error: ZodError | undefined): string {
+    if(!error) return "Unknown validation error";
+    return error.errors.map((err) => {
+            const path = err.path.join(".");
+            const message = err.message;
+            return path ? `Field "${path}": ${message}` : `Error: ${message}`;
+        }).join("\n");
+}
+
 

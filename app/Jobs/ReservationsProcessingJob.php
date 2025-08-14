@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\TMSSystem;
 use App\Services\ReservationsProcessingService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -25,17 +26,21 @@ class ReservationsProcessingJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info("RPS Job started for type: {$this->type}");
+        try {
+            Log::info("RPS Job started for type: {$this->type}");
         
-        TMSSystem::getInstance()->is_processing_shifts = true;
-        TMSSystem::getInstance()->save();
+            TMSSystem::getInstance()->is_processing_reservations = true;
+            TMSSystem::getInstance()->save();
 
-        ReservationsProcessingService::processReservations($this->type);
-        
-        TMSSystem::getInstance()->is_processing_shifts = false;
-        TMSSystem::getInstance()->save();
+            ReservationsProcessingService::processReservations($this->type);
+        } catch(Exception $ex) {
+            Log::debug($ex);
+        }finally {
+            TMSSystem::getInstance()->is_processing_reservations = false;
+            TMSSystem::getInstance()->save();
 
-        Log::info("RPS Job completed for type: {$this->type}");
+            Log::info("RPS Job completed for type: {$this->type}");
+        }
     }
 
     // Getter

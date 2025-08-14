@@ -35,6 +35,8 @@ function DataTable({title, pdata, actions, substituteFKsWithLabels, hiddenKeys, 
 
     // Actions
     function getValue(rowIdx: number, name: string, d: any): string{
+        if(d === null || d === undefined) return "N/A";
+
         const isFKValue: boolean = name.endsWith("_id");
 
         if(isFKValue && substituteFKsWithLabels && hasLabels && Object.hasOwn(data[rowIdx], "labels")){

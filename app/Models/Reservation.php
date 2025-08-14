@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,8 +28,12 @@ class Reservation extends Model
 
     protected $casts = [
         "date" => "datetime:Y-m-d",
-        "time" => "datetime:H:i",
+        // "time" => "datetime:H:i",
     ];
+
+    public function getTimeAttribute($value){
+        return Carbon::parse($value)->format('H:i');
+    }
 
     // relations
     public function traject(){ return $this->belongsTo(Traject::class, "traject_id"); }

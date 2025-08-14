@@ -4,13 +4,15 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { JSONType, DOE } from '../../types/common';
 import { FormItemDef, FormItemOptionDataPair } from '../../types/uiTypes';
+import MSelect from '../ui/MSelect';
 
 // search component
 // auto fills from url query params
 // refreshes url with search params (typically used by the backend to filter records to send)
-function SearchComp({formItems, mainSearchItemIdx}: {
+function SearchComp({formItems, mainSearchItemIdx, sortingItems}: {
     formItems: FormItemDef[], 
     mainSearchItemIdx: number,
+    sortingItems?: FormItemOptionDataPair[],
 }) {
     // if form items is empty return null
     if(formItems.length === 0) return null;
@@ -117,8 +119,14 @@ function SearchComp({formItems, mainSearchItemIdx}: {
         location.search = "";
     }
 
+    function onSortingChanged(value: string) {
+        let currSQ = new URLSearchParams(location.search);
+        currSQ.append("s", value);
+        location.search = currSQ.toString();
+    }
+
     // render search filter form
-    function renderSearchFiltersForm(){
+    function renderSearchFiltersForm(): React.ReactNode {
         return (
             <FormComp 
                 formDef={{
@@ -133,14 +141,34 @@ function SearchComp({formItems, mainSearchItemIdx}: {
         )
     }
 
+    // render sorting options
+    function renderSortingOptions(): React.ReactNode {
+        if(!sortingItems) return null;
+
+        const value = Object.hasOwn(data, "s") ? data["s"] : "";
+
+        return (
+            <MSelect 
+                name="s"
+                defaultValue={value}
+                options={sortingItems}
+                onChanged={onSortingChanged}
+            />
+        )
+    }
+
     return (
         <section className='flex flex-col gap-4'>
             {/* // Main search item */}
             <div className='flex gap-2 items-center'>
+                { renderSortingOptions() }
+                
                 <div className='grow'>
                     <Input ref={mainSearchItemInputRef} className='w-full' placeholder={"Search by " + (mainSearchItem.displayName || mainSearchItem.name.replaceAll("_", " "))} />
                 </div>
+                
                 <Button variant={"secondary"} size={"icon"} onClick={(e)=>onSearch()}><i className='bi bi-search'></i></Button>
+                
                 {!hasFilters ?
                     <Button variant={"secondary"} size={"icon"} onClick={()=>setShowFilters(prev=>!prev)} disabled={formItems.length <= 1}>
                         <i className={`bi ${showFilters ? 'bi-x-lg' : 'bi-filter'}`}></i>

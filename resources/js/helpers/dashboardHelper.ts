@@ -13,6 +13,7 @@ export function getDashboardSectionsByUserRole(userRole: UserRole): DashboardSec
                 {name: "reservations", displayName: "reservations"},
                 {name: "shifts", displayName: "shifts"},
                 {name: "conflicts", displayName: "conflicts"},
+                {name: "actions", displayName: "actions"},
                 {name: "profile", displayName: "profile"},
             ];
         case UserRole.employee:

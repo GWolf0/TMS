@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('reservation_span'); // csv
             $table->string('allowed_dropoff_times'); // csv
             $table->string('allowed_pickup_times'); // csv
-            $table->boolean('is_processing_shifts');
+            $table->boolean('is_processing_reservations');
             $table->timestamps();
         });
     }

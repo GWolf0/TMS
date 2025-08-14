@@ -3,6 +3,7 @@ namespace App\Helpers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 class QueryHelper{
     /**
@@ -27,7 +28,7 @@ class QueryHelper{
         $perPage = $queryParams['per_page'] ?? 15;
         $sortParam = $queryParams['s'] ?? null;
         $reserved = ['s', 'per_page', 'page'];
-
+        
         if (!empty($with)) {
             $builder->with($with);
         }

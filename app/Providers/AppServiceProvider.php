@@ -37,7 +37,10 @@ class AppServiceProvider extends ServiceProvider
             if (!TMSSystem::exists()) TMSSystem::factory()->create();
     
             // Ensure the default admin user exists
-            if (!User::where("role", User::$ROLES[0])->exists()) User::factory(1)->admin()->create();
+            if (!env("debug") && !User::where("role", User::$ROLES[0])->exists()) {
+                Log::debug("creating default admin");
+                User::factory(1)->admin()->create(["name" => "admin", "email" => "admin@email.com"]);
+            }
         } catch (Exception $e) {
             // Database connection issue, prevent crash
             Log::warning("Database is not ready yet: " . $e->getMessage());

@@ -18,7 +18,7 @@ class OrganizationFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->randomElement(Organization::SAMPLE_NAMES),
+            'name' => fake()->unique()->randomElement(Organization::SAMPLE_NAMES),
             'email' => fake()->unique()->companyEmail(),
             'phonenumber' => fake()->phoneNumber(),
             'contract_end_date' => now()->addYears(fake()->numberBetween(1, 3)),

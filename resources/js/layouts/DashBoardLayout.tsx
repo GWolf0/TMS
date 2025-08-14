@@ -9,7 +9,7 @@ function DashBoardLayout({user, sections, children}: {
 }) {
 
     return (
-        <MainLayout>
+        <MainLayout pageName='dashboard'>
 
             {/* // sections tabs */}
             <TabsButtons 

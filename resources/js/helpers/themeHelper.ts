@@ -13,8 +13,8 @@ export function setTheme(value: AppTheme) {
 
     localStorage.setItem("theme", value);
     
-    if(value === "dark") document.body.classList.add("dark");
-    else document.body.classList.remove("dark");
+    if(value === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
 }
 
 export function getAutoValue(): AppTheme {
