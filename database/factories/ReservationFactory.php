@@ -27,9 +27,9 @@ class ReservationFactory extends Factory
             'status' => Reservation::$STATUSES[0],
             'date' => $type === Reservation::$TYPES[0] ? now() : now()->addDay(),
             'time' => fake()->randomElement($type === Reservation::$TYPES[0] ? TMSSystem::getAvailableDropoffTimes() : TMSSystem::getAvailablePickupTimes()),
-            'traject_id' => fake()->randomElement(Traject::all()->pluck("id")->toArray()),
+            'traject_id' => fake()->randomElement(Traject::all(["id"])->pluck("id")->toArray()),
             'shift_id' => null,
-            'user_id' => fake()->randomElement(User::where('role', User::$ROLES[1])->get()->pluck("id")->toArray()),
+            'user_id' => fake()->unique()->randomElement(User::select(["id"])->where('role', User::$ROLES[1])->get()->pluck("id")->toArray()),
         ];
     }
 
@@ -47,7 +47,7 @@ class ReservationFactory extends Factory
     public function pickup(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => Reservation::$TYPES[0],
+            'type' => Reservation::$TYPES[1],
             'date' => now()->addDay(),
             'time' => fake()->randomElement(TMSSystem::getAvailablePickupTimes()),
         ]);

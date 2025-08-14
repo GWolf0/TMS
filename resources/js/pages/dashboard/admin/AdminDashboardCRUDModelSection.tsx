@@ -94,6 +94,10 @@ function AdminDashboardCRUDModelSection({data, model}: {
             <SearchComp 
                 formItems={searchItems}
                 mainSearchItemIdx={0}
+                sortingItems={[
+                    {id: "created_at_asc", label: "from oldest"},
+                    {id: "created_at_desc", label: "from newest"},
+                ]}
             />
         )
     }
@@ -107,7 +111,8 @@ function AdminDashboardCRUDModelSection({data, model}: {
                 actions={getDataTableActions()}
                 topActions={getDataTableTopActions()}
                 substituteFKsWithLabels={true}
-                hiddenKeys={[...modelDef.fields.filter(fname => !modelDef.createFields.includes(fname)), "labels"]}
+                only={modelDef.createFields}
+                // hiddenKeys={[...modelDef.fields.filter(fname => !modelDef.createFields.includes(fname)), "labels"]}
                 formItems={modelDef.formItems}
             />
         )

@@ -29,7 +29,7 @@ class ReservationRequest extends FormRequest
             'type' => [$requiredOrSometimes, Rule::in(Reservation::$TYPES)],
             'status' => [$requiredOrSometimes, Rule::in(Reservation::$STATUSES)],
             'date' => [$requiredOrSometimes, "date"],
-            'time' => [$requiredOrSometimes, 'string'],
+            'time' => [$requiredOrSometimes, 'date_format:H:i'],
             'traject_id' => [$requiredOrSometimes],
             'shift_id' => ["sometimes", "nullable"],
             'user_id' => [$requiredOrSometimes],

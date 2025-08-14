@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { LoaderCircleIcon } from 'lucide-react';
 import React from 'react'
 import { z } from "zod";
@@ -12,6 +12,7 @@ import MainLayout from '../layouts/MainLayout';
 import { LOGIN_REQ } from '../requests/requests';
 import AlertService from '../services/AlertService';
 import { DOE } from '../types/common';
+import { formatZodError } from '../helpers/zodHelper';
 
 // Login page
 function LoginPage() {
@@ -35,19 +36,22 @@ function LoginPage() {
         });
 
         const validation = validationObj.safeParse(params);
-        // alert(JSON.stringify(validation));
+        
         if(validation.success){
             const doe: DOE = await fetchLogin(validation.data);
             if(doe.error){
                 AlertService.showAlert({id: -1, text: `Error Login: ${doe.error.message}`});
             }
         }else{
-            AlertService.showAlert({id: -1, text: `Error Login: ${validation.error.message}`});
+            AlertService.showAlert({id: -1, text: `Error Login: ${formatZodError(validation.error)}`});
         }
     }
 
     return (
-        <MainLayout>
+    <>
+        <Head title="Login" />
+        
+        <MainLayout pageName='login'>
 
             {/* // Login box */}
             <section className='w-full mt-20'>
@@ -95,6 +99,7 @@ function LoginPage() {
             </section>
 
         </MainLayout>
+    </>
     )
 
 }

@@ -4,7 +4,8 @@ return [
     "tables_to_labels" => [
         "users" => "name",
         "organizations" => "name",
-        "vehicle" => "model_name",
-        "traject" => "name",
+        "vehicles" => "model_name",
+        "trajects" => "name",
+        "shifts" => "number",
     ]
 ];

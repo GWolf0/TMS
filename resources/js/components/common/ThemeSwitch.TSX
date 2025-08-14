@@ -1,13 +1,18 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { getTheme, setTheme } from '../../helpers/themeHelper';
 
 function ThemeSwitch() {
-  const isDarkMode: boolean = useMemo(() => getTheme("auto") === "dark", []);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => getTheme("auto") === "dark");
+
+  useEffect(() => {
+    const newVal = isDarkMode ? "dark" : "light";
+    setTheme(newVal);
+  }, [isDarkMode]);
 
   function onCheckedChange(checked: boolean) {
-    setTheme(checked ? "dark" : "light");
+    setIsDarkMode(checked);
   }
 
   return (

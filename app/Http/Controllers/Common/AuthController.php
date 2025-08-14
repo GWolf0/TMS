@@ -40,12 +40,43 @@ class AuthController extends Controller implements IAuthController{
         $request->session()->regenerate();
 
         return redirect()->route("dashboard");
-
-        // return response()->json([
-        //     'message' => 'Login successful.',
-        //     'user' => Auth::user()
-        // ]);
     }
+
+    // login (accepting username as well as email)
+    // public function login(Request $request): JsonResponse | RedirectResponse {
+    //     $input = $request->input('email'); // This will be either email or username
+    //     $password = $request->input('password');
+
+    //     // Validate input
+    //     $validator = Validator::make([
+    //         'login' => $input,
+    //         'password' => $password
+    //     ], [
+    //         'login' => ['required'],
+    //         'password' => ['required']
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'message' => 'Invalid input.',
+    //             'errors' => $validator->errors()
+    //         ], 422);
+    //     }
+
+    //     // Determine if input is email or username
+    //     $fieldType = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+
+    //     // Attempt login
+    //     if (!Auth::attempt([$fieldType => $input, 'password' => $password], $request->has('remember_me'))) {
+    //         return response()->json([
+    //             'message' => 'Invalid credentials.'
+    //         ], 401);
+    //     }
+
+    //     $request->session()->regenerate();
+
+    //     return redirect()->route('dashboard');
+    // }
 
     // register
     public function register(Request $request): JsonResponse | RedirectResponse{

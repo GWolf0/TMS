@@ -15,9 +15,9 @@ class ShiftResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [...parent::toArray($request), "labels" => [
-            "driver" => optional($this->driver->name),
-            "traject" => optional($this->traject->name),
-            "vehicle" => optional($this->vehicle->model_name),
+            "driver" => $this->driver?->name,
+            "traject" => $this->traject?->name,
+            "vehicle" => $this->vehicle?->model_name,
         ]];
     }
 }

@@ -38,7 +38,7 @@ class TMSSystem extends Model
         'reservation_span',
         'allowed_dropoff_times',
         'allowed_pickup_times',
-        'is_processing_shifts',
+        'is_processing_reservations',
     ];
 
     // casts

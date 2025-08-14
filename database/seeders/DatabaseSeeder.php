@@ -29,14 +29,16 @@ class DatabaseSeeder extends Seeder
 
         // users
         // one admin
-        User::factory(1)->admin()->create();
+        User::factory(1)->admin()->create(["name" => "admin", "email" => "admin@email.com"]);
         // employees
-        User::factory(70)->employee()->create();
+        User::factory(1)->employee()->create(["name" => "employee", "email" => "employee@email.com"]);
+        User::factory(499)->employee()->create();
         // drivers
-        User::factory(12)->driver()->create();
+        User::factory(1)->driver()->create(["name" => "driver", "email" => "driver@email.com"]);
+        User::factory(69)->driver()->create();
 
         // vehicles
-        Vehicle::factory(10)->create();
+        Vehicle::factory(50)->create();
         
         // reservations
         Reservation::factory(50)->pickup()->create();

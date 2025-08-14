@@ -26,7 +26,7 @@ class TMSSystemFactory extends Factory
             'reservation_span' => TMSSystem::RESERVATION_SPAN,
             'allowed_dropoff_times' => TMSSystem::ALLOWED_DROPOFF_TIMES,
             'allowed_pickup_times' => TMSSystem::ALLOWED_PICKUP_TIMES,
-            'is_processing_shifts' => false,
+            'is_processing_reservations' => false,
         ];
     }
 }

@@ -12,7 +12,7 @@ export const tmsSystemValidation = z.object({
     automatic_pickup_processing_time: z.string().time(),
     reservation_span: z.string(),
     allowed_dropoff_times: z.string(),
-    allowed_pickup_times: z.string(),
+    allowed_pickup_times: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d),([01]\d|2[0-3]):([0-5]\d)$/),
     is_processing_shifts: z.boolean().readonly(),
     created_at: z.string().datetime(),
 });
@@ -39,7 +39,7 @@ export const organizationValidation = z.object({
     name: z.string(),
     email: z.string().email(),
     phone_number: z.string(),
-    contract_end_date: z.string().datetime(),
+    contract_end_date: z.string().date(),
     created_at: z.string().datetime(),
 });
 export type OrganizationType = typeof organizationValidation._type;

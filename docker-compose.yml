@@ -17,7 +17,7 @@ services:
       - mariadb
       - redis
       - phpmyadmin
-    command: sh -c "composer install && php artisan migrate:fresh && php artisan db:seed && composer run dev"
+    command: sh -c "composer install && php artisan migrate:fresh --seed && composer run dev"
 
   # vite:
   #   image: node:18

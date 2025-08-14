@@ -1,12 +1,14 @@
-import React, { useMemo, useState } from 'react'
+import React, { use, useMemo, useState } from 'react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
 import { SUPPORTED_LANGS } from '../../langs';
 import { DOE } from '../../types/common';
 import { sendRequest } from '../../helpers/requestHelper';
 import { MISC_SET_LOCALE_REQ } from '../../requests/requests';
+import { getLocale } from '../../helpers/localizationHelper';
 
 function LangSelect() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const lang = useMemo(() => getLocale(), []);
 
     function onValueChange(value: string) {
         setLocale(value);
@@ -28,8 +30,8 @@ function LangSelect() {
     }
 
     return (
-        <Select onValueChange={onValueChange} disabled={isLoading}>
-            <SelectTrigger className="min-w-[100px]">
+        <Select onValueChange={onValueChange} defaultValue={lang} disabled={isLoading}>
+            <SelectTrigger className="w-[100px]">
                 <SelectValue placeholder="Lang" />
             </SelectTrigger>
             <SelectContent>

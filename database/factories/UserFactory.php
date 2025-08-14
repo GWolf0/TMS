@@ -42,7 +42,7 @@ class UserFactory extends Factory
     // admin user
     public function admin(): static { return $this->state(fn (array $attributes) => [
         'role' => User::$ROLES[0],
-        'password' => "adminadmin",
+        // 'password' => "adminadmin",
         'meta' => User::getDefaultMeta(User::$ROLES[0]),
         'organization_id' => null,
     ]); }    

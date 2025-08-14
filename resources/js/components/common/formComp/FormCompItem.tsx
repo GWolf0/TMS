@@ -9,8 +9,9 @@ import FormFKItem from './FormFKItem';
 import { JSONType } from '../../../types/common';
 
 function FormCompItem({item, defaultValue, fkLabel, inputProps}: {
-    item: FormItemDef, defaultValue: string | number | boolean, fkLabel: string | undefined, inputProps?: JSONType,
+    item: FormItemDef, defaultValue: string | number | boolean | undefined, fkLabel: string | undefined, inputProps?: JSONType,
 }) {
+    if(defaultValue === "N/A") defaultValue = undefined;
     inputProps = inputProps ?? undefined;
 
     switch(item.type){

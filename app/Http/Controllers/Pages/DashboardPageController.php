@@ -75,7 +75,7 @@ class DashboardPageController extends Controller{
                 "authorizations" => [
                     "start_reservations_processing" => Gate::allows('start_reservations_processing'),
                 ],
-                "is_processing_shifts" => TMSSystem::getInstance()->is_processing_shifts,
+                "is_processing_reservations" => TMSSystem::getInstance()->is_processing_reservations,
                 "auto_dropoff_processing_time" => TMSSystem::getInstance()->automatic_dropoff_processing_time,
                 "auto_pickup_processing_time" => TMSSystem::getInstance()->automatic_pickup_processing_time,
             ];

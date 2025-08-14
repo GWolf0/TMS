@@ -57,3 +57,23 @@ export function dataToString(name: string, data: any, dataType: FormItemType, la
             return String(data);
     }
 }
+
+// data to input data (make sure to format the data as expected for the input)
+export function dataToInputData(name: string, data: any, dataType: FormItemType): any{
+    if(data === null || data === undefined) return "N/A";
+    
+    switch(dataType){
+        case "boolean":
+            return Boolean(data);
+        case "date":
+            return new Date(Date.parse(String(data))).toISOString().substring(0, 10);
+        case "time":
+            return String(data);
+        case "number":
+            return Number(data);
+        case "fk":
+            return Number(data);
+        default:
+            return String(data);
+    }
+}

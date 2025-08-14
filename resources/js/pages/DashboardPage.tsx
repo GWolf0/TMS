@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { AdminDashboardPageData, DashboardPageData, DriverDashboardPageData, EmployeeDashboardPageData } from "../types/responsesTypes";
 import { SharedData } from "../types";
 import { useMemo } from "react";
@@ -20,13 +20,20 @@ function DashboardPage({data}: {
 
     if(!user) return <p>Unexpected error, unindentified user!</p>;
 
-    return user.role === UserRole.admin ? 
-        <AdminDashboard user={user} data={data as AdminDashboardPageData} /> :
-            user.role === UserRole.employee ?
-        <EmployeeDashboard user={user} data={data as EmployeeDashboardPageData} /> :
-            user.role === UserRole.driver ?
-        <DriverDashboard user={user} data={data as DriverDashboardPageData} /> :
-        <p>Unknown user!</p>
+    return (
+        <>
+            <Head title="Dashboard" />
+            {
+                user.role === UserRole.admin ? 
+                    <AdminDashboard user={user} data={data as AdminDashboardPageData} /> :
+                user.role === UserRole.employee ?
+                    <EmployeeDashboard user={user} data={data as EmployeeDashboardPageData} /> :
+                user.role === UserRole.driver ?
+                    <DriverDashboard user={user} data={data as DriverDashboardPageData} /> :
+                    <p>Unknown user!</p>
+            }
+        </>
+    )
 
 }
 

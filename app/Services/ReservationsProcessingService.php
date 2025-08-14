@@ -12,6 +12,7 @@ use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\ErrorHandler\Debug;
 
 class ReservationsProcessingService{
 
@@ -27,32 +28,37 @@ class ReservationsProcessingService{
         DB::transaction(function () use ($type) {
             // Get available vehicles and drivers
             $vehicles = Vehicle::where("status", Vehicle::$STATUS[0])->get();
-            $drivers = User::where("role", User::$ROLES[2])->whereJson("meta->is_available", "true")->get();
+            $drivers = User::where("role", User::$ROLES[2])->where("meta->is_available", "true")->get();
 
             // Get today's reservations of given type
-            $reservations = Reservation::whereDate("date", Carbon::today())->where("type", $type)->get();
+            // $reservations = Reservation::whereDate("created_at", Carbon::today())->where("type", $type)->get();
+            $reservations = Reservation::where("type", $type)->get();
+            $reservationsCount = $reservations->count();
 
             // Group by traject and time using custom key
             $grouped = $reservations->groupBy(function ($res) {
-                return $res->traject_id . '|' . $res->time;
+                return $res->time . '|' . $res->traject_id;
             });
 
-            // Initialize shift number from DB
+            Log::debug("Found $reservationsCount reservations");
+            Log::debug(json_encode($grouped));
+
+            // Initialize shift number
             $shiftNumber = 1;
+
+            // Vehicle and driver pool (copy for reuse)
+            $vehicleQueue = $vehicles->values();
+            $driverQueue = $drivers->values();
+            $vehicleIndex = 0;
+            $driverIndex = 0;
 
             // Start assigning
             foreach($grouped as $key => $groupReservations) {
-                [$trajectId, $time] = explode('|', $key);
+                [$time, $trajectId] = explode('|', $key);
                 $groupReservations = $groupReservations->values(); // reset keys
                 $date = $groupReservations[0]->date;
                 $remaining = $groupReservations->count();
                 $assignedCount = 0;
-
-                // Vehicle and driver pool (copy for reuse)
-                $vehicleQueue = $vehicles->values();
-                $driverQueue = $drivers->values();
-                $vehicleIndex = 0;
-                $driverIndex = 0;
 
                 while($remaining > 0) {
                     // Get vehicle with enough capacity
@@ -61,6 +67,7 @@ class ReservationsProcessingService{
                             "type" => Conflict::$TYPES[0], // no vehicle
                             "data" => "traject_id: $trajectId, date: $date, time: $time"
                         ]);
+                        Log::error("no more vehicles");
                         break;
                     }
 
@@ -69,11 +76,13 @@ class ReservationsProcessingService{
                             "type" => Conflict::$TYPES[1], // no driver
                             "data" => "traject_id: $trajectId, date: $date, time: $time"
                         ]);
+                        Log::error("no more drivers");
                         break;
                     }
 
                     $vehicle = $vehicleQueue[$vehicleIndex];
                     $driver = $driverQueue[$driverIndex];
+                    Log::debug("vehicle $vehicle->id, driver $driver->id");
 
                     // Create shift
                     $shift = Shift::create([
@@ -102,6 +111,7 @@ class ReservationsProcessingService{
                     // Move to next vehicle and driver
                     $vehicleIndex++;
                     $driverIndex++;
+                    Log::debug("Shift $shift->id created, vehicleIndex $vehicleIndex, driverIndex $driverIndex, assigned $assignedCount, remaining $remaining");
                 }
             }
 
@@ -112,6 +122,9 @@ class ReservationsProcessingService{
 
     // is open for reservations (can reserve)
     public static function isOpenForReservations(): bool{
+        // if in debug mode allow always
+        if(config("app.debug")) return true;
+
         $reservationSpanString = TMSSystem::getReservationSpanString();
         
         if(empty($reservationSpanString)) return false;

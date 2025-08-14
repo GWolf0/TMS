@@ -17,9 +17,9 @@ export function BaseHeader({logo, items}: {
 }
 
 // base footer
-export function BaseFooter({items, appName}: {
+export function BaseFooter({items, appName, extraWidgets}: {
     items: Array<{title: string, items: {name: string, link: string}[]}> | {name: string, link: string}[],
-    appName: string,
+    appName: string, extraWidgets?: React.ReactNode,
 }){
 
     // render items
@@ -64,6 +64,9 @@ export function BaseFooter({items, appName}: {
             <section className="flex gap-2 py-4">
                 {renderItems()}
             </section>
+
+            {/* // extraWidgets */}
+            { extraWidgets }
 
             {/* // copy and app name */}
             <div className="flex items-center justify-end py-4 text-xs">

@@ -29,7 +29,7 @@ class ShiftRequest extends FormRequest
             'number' => ["sometimes", "nullable", "numeric"],
             'type' => [$requiredOrSometimes, Rule::in(Reservation::$TYPES)],
             'date' => [$requiredOrSometimes, "date"],
-            'time' => [$requiredOrSometimes, "string"],
+            'time' => [$requiredOrSometimes, 'date_format:H:i'],
             'driver_id' => ["sometimes", "nullable"],
             'traject_id' => ["sometimes", "nullable"],
             'vehicle_id' => ["sometimes", "nullable"],

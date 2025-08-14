@@ -4,7 +4,7 @@ import { z } from "zod";
 // form component
 export type FormItemType = "hidden" | "text" | "number" | "boolean" | "options" | "date" | "time" | "fk";
 
-export type FormItemOptionDataPair = {id: number | string, label: string | number};
+export type FormItemOptionDataPair = {id: number | string, label: string | number}; // id used as value, label as display value
 export interface FormItemMeta{
     fkTable?: string, // required to get fk label from table
     optionsData?: FormItemOptionDataPair[],
